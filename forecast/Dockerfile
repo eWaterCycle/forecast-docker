@@ -16,6 +16,7 @@ RUN apt-get -y install \
     ant \
     python \
     python-numpy \
+    python-jinja2 \
     lsb \
     libjpeg62 \
     sudo \
@@ -39,7 +40,7 @@ ENV PYTHONPATH=/usr/src/pcraster-4.1.0_x86-64/python:${PYTHONPATH}
 ARG PCR-GLOBWB_model_tag=v2.0_alpha_ewatercycle
 RUN git clone https://github.com/eWaterCycle/PCR-GLOBWB_model.git && \
     cd PCR-GLOBWB_model && \
-    git checkout tags/${PCR-GLOBWB_model_tag} 2> /dev/null
+    git checkout tags/v2.0_alpha_ewatercycle 2> /dev/null
 
 # install openDA
 RUN mkdir -p /usr/src && \

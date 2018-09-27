@@ -23,7 +23,8 @@ if __name__ == '__main__':
         print "ERROR: configuration template dir (%s) does not exist" % openda_config_template_dir
         sys.exit(1)
 
-    io_dir = os.getenv("IO_DIR")
+    # hardcode io_dir
+    io_dir = '/usr/src'
 
     if not os.path.isdir(io_dir):
         print "IO dir does not exist"
@@ -56,10 +57,3 @@ if __name__ == '__main__':
         result_file = open(result_filename, 'w')
         result_file.write(result_string)
         result_file.close()
-
-    io_output_dir = os.path.join(io_dir, 'forecast', result_dir)
-
-    if os.path.isdir(io_output_dir):
-        shutil.rmtree(io_output_dir)
-
-    shutil.copytree(result_dir, io_output_dir)
