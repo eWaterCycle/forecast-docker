@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<EnkfConfig xmlns="http://www.openda.org" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openda.org http://schemas.openda.org/algorithm/enkf.xsd">
+	<!-- type="fromObservationTimes", i.e. perform an analysis at each time for which the stochObserver has observations -->
+	<!-- continueWithoutObservation="true", i.e. continue running until model endTime, even after the last observation time -->
+	<analysisTimes type="fromObservationTimes" continueWithoutObservation="true"/>
+    <ensembleSize>{{ ensemble_member_count }}</ensembleSize>
+    <localization>hamill</localization>
+    <distance>100000</distance> 
+</EnkfConfig>

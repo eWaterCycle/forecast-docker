@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bmiModelFactoryConfig xmlns="http://www.openda.org" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openda.org bmiModelFactoryConfig.xsd">
+	<pythonModel>
+        <pythonPath>../PCR-GLOBWB/model</pythonPath>
+		<moduleName>bmiPcrglobwb</moduleName>
+		<className>BmiPCRGlobWB</className>
+	</pythonModel>
+    <modelTemplateDirectory>../model_template</modelTemplateDirectory>
+    <modelConfigFile>pcrglobwb_config.ini</modelConfigFile>
+    <bmiModelStateExchangeItems>
+        <limitedExchangeItem>
+            <exchangeItemId>top_layer_soil_saturation</exchangeItemId>
+            <lowerLimit>0.0</lowerLimit>
+            <upperLimit>1.0</upperLimit>
+        </limitedExchangeItem>
+    </bmiModelStateExchangeItems>
+    <hosts>{{ model_hosts }}</hosts>
+</bmiModelFactoryConfig>

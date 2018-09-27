@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<blackBoxStochModel xmlns="http://www.openda.org" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openda.org http://schemas.openda.org/blackBoxStochModelConfig.xsd">
+    <modelFactory className="org.openda.model_bmi.BmiModelFactory" workingDirectory=".">
+        <arg>PCRGlobWB_ModelFactoryConfig.xml</arg>
+	</modelFactory>
+	<vectorSpecification>
+		<state>
+			<!-- tell OpenDA which model exchangeItem(s) should be updated with the innovation during the analysis -->
+			<vector id="top_layer_soil_saturation"/>
+		</state>
+		<predictor>
+			<!-- tell OpenDA which observation exchangeItem(s) should be used for determining the innovation during the analysis and which modelExchangeItem corresponds to which observationExchangeItem -->
+			<vector id="VAR_40_GDS4_SFC" sourceVectorId="top_layer_soil_saturation"/>
+		</predictor>
+	</vectorSpecification>
+</blackBoxStochModel>

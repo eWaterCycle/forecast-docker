@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openDaApplication xmlns="http://www.openda.org" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openda.org http://schemas.openda.org/openDaApplication.xsd">
+	<!-- specify type of observations and config file for observations -->
+	<stochObserver className="org.openda.observers.IoObjectStochObserver">
+		<workingDirectory>.</workingDirectory>
+		<configFile>stochObserverConfig.xml</configFile>
+	</stochObserver>
+	
+	<stochModelFactory className="org.openda.models.threadModel.ThreadStochModelFactory">
+                <workingDirectory>.</workingDirectory>
+                <configFile>threadStochModelConfig.xml</configFile>
+        </stochModelFactory>
+	
+	<!-- specify type of algorithm and config file for algorithm -->
+	<algorithm className="org.openda.algorithms.kalmanFilter.EnKFSeq">
+		<workingDirectory>.</workingDirectory>
+		<configString>enkfSequentialAlgorithmConfig.xml</configString>
+	</algorithm>
+
+    <restartOutFilePrefix>restart</restartOutFilePrefix>
+    <restartOutFileTimes>{{ state_write_time }}</restartOutFileTimes>
+	
+</openDaApplication>
