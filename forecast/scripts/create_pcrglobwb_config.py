@@ -19,7 +19,8 @@ if config_template is None:
     sys.exit(1)
 
 #output folder (set in environment by Cylc)
-io_dir = os.getenv("IO_DIR")
+io_dir = '/usr/src'
+#io_dir = os.getenv("IO_DIR")
 
 if not os.path.isdir(io_dir):
     print "IO dir does not exist"
@@ -53,7 +54,3 @@ result_filename = 'pcrglobwb_config.ini'
 result_file = open(result_filename, 'w')
 result_file.write(result_string)
 result_file.close()
-
-#copy output to final output folder
-io_output_dir = os.path.join(io_dir, 'forecast')
-shutil.copy(result_filename, io_output_dir)
