@@ -1,0 +1,10 @@
+---
+
+version: '3.6'
+
+services:
+    ewtrcyclforecast:
+        build:
+            context: .
+        image: "ewtrcycl:ewtrcyclforecast_getforcing"
+        container_name: ewtrcyclforecast_getforcing
