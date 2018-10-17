@@ -7,12 +7,15 @@
 #     ISO_DATE and ISO_DATE_EXT, for date to process
 #     MODEL_GRID for definition of grid to resize forcings to, so that it is equal to the model grid
 
-#stop the script if we use an unset variable, or a command fails
+# stop the script if we use an unset variable, or a command fails
 set -o nounset -o errexit
 
-#copy input from shared input/output dir
-cp $IO_DIR/download/gefs/* .
-cp $IO_DIR/preprocess/deterministic/* .
+# copy input from shared input/output dir
+# cp $IO_DIR/download/gefs/* .
+# cp $IO_DIR/preprocess/deterministic/* .
+mkdir temp/
+tar -xjf ${DETERMINISTIC_OUTPUT_TARBALL} -C temp/
+tar -xjf ${INPUT_ENSEMBLE_TARBALL} -C temp/
 
 #Select precipication and temperature variables from the downloaded input.
 for ensembleMember in {01..20}
@@ -21,12 +24,12 @@ do
     #Since precip is only available after every 6 hours
     for hour in 06 {12..192..6};
     do
-        cdo selparam,8.1.0 gep${ensembleMember}.t00z.pgrb2f${hour} precipEnsMem${ensembleMember}f${hour}.grib2
+        cdo selparam,${GRIB_PRECIPITATION_PARAMETER} temp/gep${ensembleMember}.t00z.pgrb2f${hour} precipEnsMem${ensembleMember}f${hour}.grib2
     done
 
     for hour in 00 06 {12..192..6};
     do
-        cdo selparam,0.0.0 gep${ensembleMember}.t00z.pgrb2f${hour} tempEnsMem${ensembleMember}f{$hour}.grib2
+        cdo selparam,${GRIB_TEMPERATURE_PARAMETER} temp/gep${ensembleMember}.t00z.pgrb2f${hour} tempEnsMem${ensembleMember}f{$hour}.grib2
     done
 
     # All downloaded files only contain one time-step.
@@ -47,17 +50,26 @@ cdo ensmean tempEnsMem??.grib2 tempEnsMeanOut.grib2
 
 for ensembleMember in {01..20}
 do
-    cdo -f nc setrtoc,-100,0.0,0.0 -add forcingPrecipDailyOut.nc -remapnn,forcingPrecipDailyOut.nc -setmissval,1.0E20 -setname,precipitation -daysum -settime,00:00:00 -mulc,0.001 -sub precipEnsMem${ensembleMember}.grib2 precipEnsMeanOut.grib2 GFSResPrecipEnsMem${ensembleMember}.nc
+    #  cdo -f nc setrtoc,-100,0.0,0.0 -add temp/forcingPrecipDailyOut.nc -remapnn,temp/forcingPrecipDailyOut.nc -setmissval,${NETCDF_FILLVALUE} -setname,precipitation -daysum -settime,00:00:00 -mulc,0.001 -sub precipEnsMem${ensembleMember}.grib2 precipEnsMeanOut.grib2 GFSResPrecipEnsMem${ensembleMember}.nc
+    cdo -f nc sub precipEnsMem${ensembleMember}.grib2 precipEnsMeanOut.grib2 temp.nc
+    cdo -f nc setname,precipitation -daysum -settime,00:00:00 -mulc,0.001 temp.nc temp2.nc
+    cdo -f nc remapnn,temp/forcingPrecipDailyOut.nc -setmissval,${NETCDF_FILLVALUE} temp2.nc temp3.nc
+    cdo -f nc setrtoc,-100,0.0,0.0 -add temp/forcingPrecipDailyOut.nc temp3.nc GFSResPrecipEnsMem${ensembleMember}.nc    
 
-    cdo -f nc remapbil,${MODEL_GRID} GFSResPrecipEnsMem${ensembleMember}.nc precipEnsMem${ensembleMember}.nc
+    cdo -f nc remapbil,${TARGET_GRID} GFSResPrecipEnsMem${ensembleMember}.nc precipEnsMem${ensembleMember}.nc
 
-    cdo -f nc add forcingTempDailyOut.nc -remapnn,forcingTempDailyOut.nc -setmissval,1.0E20 -setname,temperature -settime,00:00:00 -setunit,C -dayavg -sub tempEnsMem${ensembleMember}.grib2 tempEnsMeanOut.grib2 GFSResTempEnsMem${ensembleMember}.nc
+    # cdo -f nc add temp/forcingTempDailyOut.nc -remapnn,temp/forcingTempDailyOut.nc -setmissval,${NETCDF_FILLVALUE} -setname,temperature -settime,00:00:00 -setunit,C -dayavg -sub tempEnsMem${ensembleMember}.grib2 tempEnsMeanOut.grib2 GFSResTempEnsMem${ensembleMember}.nc
+    cdo -f nc sub tempEnsMem${ensembleMember}.grib2 tempEnsMeanOut.grib2 temp.nc
+    cdo -f nc setname,temperature -settime,00:00:00 -setunit,C -dayavg temp.nc temp2.nc
+    cdo -f nc add temp/forcingTempDailyOut.nc -remapnn,temp/forcingTempDailyOut.nc -setmissval,${NETCDF_FILLVALUE} temp2.nc GFSResTempEnsMem${ensembleMember}.nc
 
-    cdo -f nc remapbil,${MODEL_GRID} GFSResTempEnsMem${ensembleMember}.nc tempEnsMem${ensembleMember}.nc
+    cdo -f nc remapbil,${TARGET_GRID} GFSResTempEnsMem${ensembleMember}.nc tempEnsMem${ensembleMember}.nc
 
 done
 
 # copy output to shared folder
-mkdir -p $IO_DIR/preprocess/ensemble
-cp tempEnsMem??.nc $IO_DIR/preprocess/ensemble/
-cp precipEnsMem??.nc $IO_DIR/preprocess/ensemble/
+mkdir temp/out/
+cp tempEnsMem??.nc temp/out/
+cp precipEnsMem??.nc temp/out/
+
+tar cjf ${OUTPUT_TARBALL_NAME}.tar.bz2 temp/out/*

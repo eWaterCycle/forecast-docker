@@ -10,7 +10,6 @@
 set -o nounset -o errexit
 
 #copy from shared input/output dir
-# cp $IO_DIR/download/gfs/* .
 mkdir temp/
 tar -xjf ${INPUT_TARBALL} -C temp/
 
