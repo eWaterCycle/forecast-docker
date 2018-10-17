@@ -2,7 +2,7 @@
 
 cwlVersion: v1.0
 class: CommandLineTool
-baseCommand: create_openda_config.py
+baseCommand: run_create_openda_config.sh
 hints:
   DockerRequirement:
     dockerImageId: rvanharen:ewtrcyclforecast
@@ -29,28 +29,4 @@ outputs:
   PCRGlobWB_ModelFactoryConfig:
     type: File
     outputBinding:
-      glob: openda_config/PCRGlobWB_ModelFactoryConfig.xml
-  bbStochModelConfig:
-    type: File
-    outputBinding:
-      glob: openda_config/bbStochModelConfig.xml
-  enkfSequentialAlgorithmConfig:
-    type: File
-    outputBinding:
-      glob: openda_config/enkfSequentialAlgorithmConfig.xml
-  ewatercycle.oda:
-    type: File
-    outputBinding:
-      glob: openda_config/ewatercycle.oda
-  stochObserverConfig:
-    type: File
-    outputBinding:
-      glob: openda_config/stochObserverConfig.xml
-  stochObserverUncertaintiesConfig:
-    type: File
-    outputBinding:
-      glob: openda_config/stochObserverUncertaintiesConfig.xml
-  threadStochModelConfig:
-    type: File
-    outputBinding:
-      glob: openda_config/threadStochModelConfig.xml
+      glob: openda_config.tar.gz
