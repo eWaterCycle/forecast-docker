@@ -13,11 +13,17 @@ apt-get -y upgrade
 
 # Install dependencies
 RUN apt-get -y install \
+    tzdata
+
+RUN apt-get -y install \
     python \
     python-numpy \
     sudo \
     wget \
     git
+
+RUN apt-get -y install \
+    cdo
 
 # set workdir
 WORKDIR /usr/src

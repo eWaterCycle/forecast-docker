@@ -10,13 +10,16 @@
 set -o nounset -o errexit
 
 #copy from shared input/output dir
-cp $IO_DIR/download/gfs/* .
+# cp $IO_DIR/download/gfs/* .
+
+mkdir temp/
+tar -xjf ${INPUT_TARBALL} -C temp/
 
 #Select precipication from the downloaded input. Note we skip the first file,
 # and any other file (since precip is only available after every 6 hours.
 for hour in {006..240..6} {252..384..12};
 do
-    cdo selparam,8.1.0 gfs.t00z.pgrb2.0p25.f${hour} precipf${hour}.grib2
+    cdo selparam,${GRIB_PRECIPITATION_PARAMETER} temp/gfs.t00z.pgrb2.0p25.f${hour} precipf${hour}.grib2
 done
 
 ## Precipitation ##
@@ -43,15 +46,17 @@ cdo mergetime precipf*.grib2 forcingPrecipInput.grib2
 # but PCRGlobWB needs a _FillValue attribute.
 #
 # -f nc finally, this option makes sure that the output is written as NetCDF file
-cdo -f nc setmissval,1.0E20 -setname,precipitation -daysum -settime,00:00:00 -setrtoc,-100,0.0,0.0 -mulc,0.001 -setunit,m.day-1  forcingPrecipInput.grib2 forcingPrecipDailyOut.nc
-
+#cdo -f nc setmissval,${NETCDF_FILLVALUE} -setname,precipitation -daysum -settime,00:00:00 -setrtoc,-100,0.0,0.0 -mulc,0.001 -setunit,m.day-1  forcingPrecipInput.grib2 forcingPrecipDailyOut.nc
+#cdo -f nc daysum -settime,00:00:00 -setrtoc,-100,0.0,0.0 -mulc,0.001 -setunit,m.day-1  forcingPrecipInput.grib2 forcingPrecipDailyOut.nc
+cdo -f nc settime,00:00:00 -setrtoc,-100,0.0,0.0 -mulc,0.001 -setunit,m.day-1  forcingPrecipInput.grib2 temp.nc
+cdo -f nc setmissval,${NETCDF_FILLVALUE} -setname,precipitation -daysum temp.nc forcingPrecipDailyOut.nc
 
 ## Temperature ##
 
 #Select temperature from the downloaded input.
 for hour in {000..240..3} {252..384..12};
 do
-        cdo selparam,0.0.0 gfs.t00z.pgrb2.0p25.f${hour} tempf${hour}.grib2
+        cdo selparam,${GRIB_TEMPERATURE_PARAMETER} temp/gfs.t00z.pgrb2.0p25.f${hour} tempf${hour}.grib2
 done
 
 # merge all temperature files into one large file. All downloaded files only contain one time-step.
@@ -73,14 +78,10 @@ cdo mergetime tempf*.grib2 forcingTempInput.grib2
 # but PCRGlobWB needs a _FillValue attribute.
 #
 # -f nc finally, this option makes sure that the output is written as NetCDF file
-cdo -f nc setmissval,1.0E20 -setname,temperature -settime,00:00:00 -dayavg forcingTempInput.grib2 forcingTempDailyOut-K.nc
+cdo -f nc setmissval,${NETCDF_FILLVALUE} -setname,temperature -settime,00:00:00 -dayavg forcingTempInput.grib2 forcingTempDailyOut-K.nc
 
 #create a version with the temperature in Celcius as well
 cdo -subc,273.15 -setunit,C forcingTempDailyOut-K.nc forcingTempDailyOut.nc
 
 # copy output to shared folder
-
-mkdir -p $IO_DIR/preprocess/deterministic/
-cp forcingPrecipDailyOut.nc $IO_DIR/preprocess/deterministic/
-cp forcingTempDailyOut.nc $IO_DIR/preprocess/deterministic/
-cp forcingTempDailyOut-K.nc $IO_DIR/preprocess/deterministic/
+tar cjf ${OUTPUT_TARBALL_NAME}.tar.bz2 forcingPrecipDailyOut.nc forcingTempDailyOut.nc forcingTempDailyOut-K.nc

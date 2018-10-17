@@ -23,4 +23,3 @@ bunzip2 ${OBSERVATIONS}
 
 #scale, set correct time, date and calender, mask unwanted observations (e.g. for which there is no model)
 cdo -f nc4 ifthen ${OBSERVATION_MASK} -remapbil,${OBSERVATION_TARGET_GRID} -settime,00:00:00 -setdate,${ISO_DATE_EXT} -setcalendar,standard h14_${ISO_DATE}_0000.grib h14_${ISO_DATE}.nc
-
