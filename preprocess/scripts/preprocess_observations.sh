@@ -14,12 +14,16 @@ set -o nounset -o errexit
 # define alternative date format
 ISO_DATE_EXT=$(date -d ${ISO_DATE} +"%Y-%m-%d")
 
-#unzip
-#bunzip2 h14_${ISO_DATE}_0000.grib.bz2
-bunzip2 ${OBSERVATIONS}
+INPUT_FILENAME=`echo ${INPUT_TARBALL} | sed -e 's/^.*\///g' | sed -e 's/\.bz2//g'`
+echo ${INPUT_FILENAME}
 
-#convert to NetCDF using ncl_convert2nc
-#ncl_convert2nc h14_${ISO_DATE}_0000.grib
+#unzip
+mkdir temp/
+bzip2 -ckd ${INPUT_TARBALL} > temp/${INPUT_FILENAME}
 
 #scale, set correct time, date and calender, mask unwanted observations (e.g. for which there is no model)
-cdo -f nc4 ifthen ${OBSERVATION_MASK} -remapbil,${OBSERVATION_TARGET_GRID} -settime,00:00:00 -setdate,${ISO_DATE_EXT} -setcalendar,standard h14_${ISO_DATE}_0000.grib h14_${ISO_DATE}.nc
+cdo -f nc4 -setgridtype,regular -settime,00:00:00 -setdate,${ISO_DATE_EXT} -setcalendar,standard temp/${INPUT_FILENAME} temp.nc
+cdo -f nc4 ifthen ${TARGET_MASK} -remapbil,${TARGET_GRID} temp.nc ${OUTPUT_TARBALL_NAME}.nc
+
+# tar
+tar cjf ${OUTPUT_TARBALL_NAME}.tar.bz2 ${OUTPUT_TARBALL_NAME}.nc

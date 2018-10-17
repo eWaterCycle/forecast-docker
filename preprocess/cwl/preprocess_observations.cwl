@@ -9,21 +9,24 @@ hints:
 requirements:
   EnvVarRequirement:
     envDef:
+      INPUT_TARBALL: $(inputs.input_tarball.path)
       ISO_DATE: $(inputs.iso_date)
-      OBSERVATION_MASK: $(inputs.observation_mask.basename)
-      OBSERVATION_TARGET_GRID: $(inputs.target_grid.basename)
-      OBSERVATIONS: $(inputs.observations.basename)
+      TARGET_MASK: $(inputs.target_mask.path)
+      TARGET_GRID: $(inputs.target_grid.path)
+      OUTPUT_TARBALL_NAME: $(inputs.output_tarball_name)
 inputs:
+  input_tarball:
+    type: File
   iso_date:
     type: int
-  observation_mask:
+  target_mask:
     type: File
   target_grid:
     type: File
-  observations:
-    type: File
+  output_tarball_name:
+    type: string
 outputs:
   preprocess_observations:
     type: File
     outputBinding:
-      glob: h14_$(iso_date).nc
+      glob: $(inputs.output_tarball_name).tar.bz2

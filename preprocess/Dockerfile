@@ -36,4 +36,4 @@ RUN mkdir -p /usr/src/scripts
 COPY scripts /usr/src/scripts
 
 # command
-CMD echo "test"
+CMD echo "pinkelen"

@@ -11,7 +11,6 @@ set -o nounset -o errexit
 
 #copy from shared input/output dir
 # cp $IO_DIR/download/gfs/* .
-
 mkdir temp/
 tar -xjf ${INPUT_TARBALL} -C temp/
 
@@ -47,8 +46,7 @@ cdo mergetime precipf*.grib2 forcingPrecipInput.grib2
 #
 # -f nc finally, this option makes sure that the output is written as NetCDF file
 #cdo -f nc setmissval,${NETCDF_FILLVALUE} -setname,precipitation -daysum -settime,00:00:00 -setrtoc,-100,0.0,0.0 -mulc,0.001 -setunit,m.day-1  forcingPrecipInput.grib2 forcingPrecipDailyOut.nc
-#cdo -f nc daysum -settime,00:00:00 -setrtoc,-100,0.0,0.0 -mulc,0.001 -setunit,m.day-1  forcingPrecipInput.grib2 forcingPrecipDailyOut.nc
-cdo -f nc settime,00:00:00 -setrtoc,-100,0.0,0.0 -mulc,0.001 -setunit,m.day-1  forcingPrecipInput.grib2 temp.nc
+cdo -f nc settime,00:00:00 -setrtoc,-100,0.0,0.0 -mulc,0.001 -setunit,m.day-1 forcingPrecipInput.grib2 temp.nc
 cdo -f nc setmissval,${NETCDF_FILLVALUE} -setname,precipitation -daysum temp.nc forcingPrecipDailyOut.nc
 
 ## Temperature ##
