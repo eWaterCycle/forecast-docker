@@ -65,5 +65,5 @@ COPY scripts /usr/src/scripts
 ENV PCRGLOBWB_MODEL_DIR=/usr/src/PCR-GLOBWB_model
 ENV OPENDA_DIR=/usr/src/openda
 ENV OPENDA_CONFIG_TEMPLATE_DIR=/usr/src/templates/openda
-ENV PCRGLOBWB_CONFIG_TEMPLATE=/usr/src/templates/pcrglobwb
+ENV PCRGLOBWB_CONFIG_TEMPLATE_DIR=/usr/src/templates/pcrglobwb
 CMD echo "test"

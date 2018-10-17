@@ -19,6 +19,7 @@ inputs:
     type: string
   hydroworld_location:
     type: string
+    default: '/tmp/hydroworld'
 outputs:
   pcrglobwb_config:
     type: File
