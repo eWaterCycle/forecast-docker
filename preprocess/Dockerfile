@@ -25,6 +25,9 @@ RUN apt-get -y install \
 RUN apt-get -y install \
     cdo
 
+RUN apt-get -y install \
+    ncl-ncarg
+
 # set workdir
 WORKDIR /usr/src
 
