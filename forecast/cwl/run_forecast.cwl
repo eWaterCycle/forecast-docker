@@ -9,60 +9,35 @@ hints:
 requirements:
   EnvVarRequirement:
     envDef:
-      PCRGlobWB_ModelFactoryConfig: $(inputs.PCRGlobWB_ModelFactoryConfig)
-      bbStochModelConfig: $(inputs.bbStochModelConfig)
-      enkfSequentialAlgorithmConfig: $(inputs.enkfSequentialAlgorithmConfig)
-      ewatercycle_oda: $(inputs.ewatercycle_oda)
-      stochObserverConfig: $(inputs.stochObserverConfig)
-      stochObserverUncertaintiesConfig: $(inputs.stochObserverUncertaintiesConfig)
-      threadStochModelConfig: $(inputs.threadStochModelConfig)
-      pcrgobwb_config: $(inputs.pcrgobwb_config)
-      observationFile: $(inputs.observationFile)
+      OBSERVATION: $(inputs.observation.path)
+      OPENDA_CONFIG: $(inputs.openda_config.path)
+      PCRGLOBWB_CONFIG: $(inputs.pcrglobwb_config.path)
+      ENSEMBLE_MEMBER_COUNT: $(inputs.ensemble_count)
+      INPUT_STATE: $(inputs.input_state.path)
+      ENSEMBLE_FORCING: $(inputs.ensemble_forcing.path)
+      HYDROWORLD: $(inputs.hydroworld.path)      
 inputs:
-  PCRGlobWB_ModelFactoryConfig:
+  openda_config:
     type: File
-  bbStochModelConfig:
+  pcrglobwb_config:
     type: File
-  enkfSequentialAlgorithmConfig:
+  observation:
     type: File
-  ewatercycle_oda:
+  ensemble_count:
+    type: int
+  input_state:
     type: File
-  stochObserverConfig:
+  ensemble_forcing:
     type: File
-  stochObserverUncertaintiesConfig:
+  hydroworld:
     type: File
-  threadStochModelConfig:
-    type: File
-  pcrgobwb_config:
-    type: File
-  observationFile:
-    type: File
+
 outputs:
-  PCRGlobWB_ModelFactoryConfig:
+  forecast:
     type: File
     outputBinding:
-      glob: openda_config/PCRGlobWB_ModelFactoryConfig.xml
-  bbStochModelConfig:
+      glob: forecast.tar.gz
+  new_state:
     type: File
     outputBinding:
-      glob: openda_config/bbStochModelConfig.xml
-  enkfSequentialAlgorithmConfig:
-    type: File
-    outputBinding:
-      glob: openda_config/enkfSequentialAlgorithmConfig.xml
-  ewatercycle.oda:
-    type: File
-    outputBinding:
-      glob: openda_config/ewatercycle.oda
-  stochObserverConfig:
-    type: File
-    outputBinding:
-      glob: openda_config/stochObserverConfig.xml
-  stochObserverUncertaintiesConfig:
-    type: File
-    outputBinding:
-      glob: openda_config/stochObserverUncertaintiesConfig.xml
-  threadStochModelConfig:
-    type: File
-    outputBinding:
-      glob: openda_config/threadStochModelConfig.xml
+      glob: new_state.tar.gz

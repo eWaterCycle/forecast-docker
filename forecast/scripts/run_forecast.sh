@@ -7,14 +7,13 @@
 set -o nounset -o errexit
 
 #copy openda config to current working directory
-OPENDA_CONFIG_DIR=$IO_DIR/forecast/openda_config
-echo 'openda_config' $OPENDA_CONFIG_DIR
-echo 'pwd' $(pwd)
-cp -r $OPENDA_CONFIG_DIR .
+tar xvf $OPENDA_CONFIG
 
 #copy observations to openda config folder
-OBSERVATION_FILE=$IO_DIR/preprocess/h14_$ISO_DATE.nc
-cp $OBSERVATION_FILE openda_config/h14_observations.nc
+tar xvf $OBSERVATION
+
+OBS=$(basename "$OBSERVATION" | cut -d. -f1)
+mv $OBS.nc openda_config/h14_observations.nc
 
 #copy model
 cp -r $PCRGLOBWB_MODEL_DIR PCR-GLOBWB
@@ -22,8 +21,16 @@ cp -r $PCRGLOBWB_MODEL_DIR PCR-GLOBWB
 #needed for openda
 mkdir model_template
 
-PCRGLOBWB_CONFIG=$IO_DIR/forecast/pcrglobwb_config.ini
 cp $PCRGLOBWB_CONFIG model_template
+
+find
+
+echo ensemble_count: $ENSEMBLE_MEMBER_COUNT
+
+tar xvf $INPUT_STATE
+tar xvf $ENSEMBLE_FORCING
+
+tar xvf $HYDROWORLD -C /tmp
 
 #As this for loop runs up to _and_including_ the given value, we
 #Get an additional member (0) for the main OpenDA model
@@ -39,19 +46,19 @@ do
     cp $PCRGLOBWB_CONFIG $INSTANCE_DIR
 
     #copy initial state to instance
-    ENSEMBLE_INITIAL_DIR="$IO_DIR/initial/state-member$ensembleMemberPadded"
+    ENSEMBLE_INITIAL_DIR="state/state-member$ensembleMemberPadded"
     cp -r $ENSEMBLE_INITIAL_DIR $INSTANCE_DIR/initial
 
     #copy forcings to instance
-    PRECIPITATION_FILE=$IO_DIR/preprocess/ensemble/precipEnsMem$ensembleMemberPadded.nc
-    TEMPERATURE_FILE=$IO_DIR/preprocess/ensemble/tempEnsMem$ensembleMemberPadded.nc
+    PRECIPITATION_FILE=temp/out/precipEnsMem$ensembleMemberPadded.nc
+    TEMPERATURE_FILE=temp/out/tempEnsMem$ensembleMemberPadded.nc
 
     #Ensemble member 0 (the main model in OpenDA terms) does not need its own forcings as it is not actually run.
     #Borrow forcing files from member 01 so the model does not complain about lack of forcing files
     if [[ "$ensembleMember" -eq "0" ]]
     then
-        PRECIPITATION_FILE=$IO_DIR/preprocess/ensemble/precipEnsMem01.nc
-        TEMPERATURE_FILE=$IO_DIR/preprocess/ensemble/precipEnsMem01.nc
+        PRECIPITATION_FILE=temp/out/precipEnsMem01.nc
+        TEMPERATURE_FILE=temp/out/precipEnsMem01.nc
     fi
 
 
@@ -85,8 +92,7 @@ cd $WORKDIR
 
 
 #copy output to shared dir for further processing
-
-OUTPUT_DIR=$IO_DIR/forecast/forecast
+OUTPUT_DIR=forecast
 
 #make sure we get a clean output dir
 rm -rf $OUTPUT_DIR
@@ -104,11 +110,12 @@ do
         cp work${ensembleMember}/output/netcdf/discharge_dailyTot_output.nc $OUTPUT_DIR/member${ensembleMemberPadded}-discharge_dailyTot_output.nc
     fi
 
-    OUT_STATE_DIR=$OUTPUT_DIR/out-state/state-member${ensembleMemberPadded}/
+    OUT_STATE_DIR=output_state/state/state-member${ensembleMemberPadded}/
     mkdir -p $OUT_STATE_DIR
 
     cp work${ensembleMember}/output_state/* $OUT_STATE_DIR
 
 done
 
-
+tar cvzf forecast.tar.gz forecast
+tar cvzf output_state.tar.gz -C output_state state

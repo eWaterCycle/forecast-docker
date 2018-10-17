@@ -12,21 +12,15 @@ from jinja2 import Environment, FileSystemLoader
 #input template (set in environment by Cylc)
 #config_template=os.getenv('PCRGLOBWB_CONFIG_TEMPLATE')
 # FIXME hardcode config_template
-config_template = '/usr/src/templates/pcrglobwb/template-30min.ini'
 
-if config_template is None:
-    print "ERROR: configuration template not defined"
-    sys.exit(1)
+template_dir=os.getenv('PCRGLOBWB_CONFIG_TEMPLATE_DIR')
+if not template_dir:
+    template_dir='/usr/src/templates/pcrglobwb/'
+template_file=os.getenv('PCRGLOBWB_CONFIG_TEMPLATE')
+if not template_file:
+    template_file='template-30min.ini'
 
-#output folder (set in environment by Cylc)
-io_dir = '/usr/src'
-#io_dir = os.getenv("IO_DIR")
-
-if not os.path.isdir(io_dir):
-    print "IO dir does not exist"
-    exit(1)
-
-template_dir, template_file = os.path.split(config_template)
+config_template = os.path.join(template_dir,template_file)
 
 #dict with all replacements
 replacements = {

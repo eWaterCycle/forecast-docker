@@ -12,6 +12,7 @@ requirements:
       STARTTIME: $(inputs.starttime)
       ENDTIME: $(inputs.endtime)
       HYDROWORLD_LOCATION: $(inputs.hydroworld_location)
+      PCRGLOBWB_CONFIG_TEMPLATE: $(inputs.config_template)
 inputs:
   starttime:
     type: string
@@ -19,6 +20,10 @@ inputs:
     type: string
   hydroworld_location:
     type: string
+    default: '/tmp/hydroworld'
+  config_template:
+    type: string
+    default: 'template-30min.ini'
 outputs:
   pcrglobwb_config:
     type: File

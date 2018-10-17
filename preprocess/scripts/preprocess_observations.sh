@@ -26,8 +26,8 @@ bzip2 -ckd ${INPUT_TARBALL} > temp/${INPUT_FILENAME}
 ncl_convert2nc temp/${INPUT_FILENAME}
 
 #scale, set correct time, date and calender, mask unwanted observations (e.g. for which there is no model)
-cdo settime,00:00:00 -setdate,${ISO_DATE_EXT} -setcalendar,standard temp/${INPUT_FILENAME2} temp2.nc
-cdo -f nc4 ifthen ${TARGET_MASK} -remapbil,${TARGET_GRID} temp2.nc ${OUTPUT_TARBALL_NAME}.nc
+cdo settime,00:00:00 -setdate,${ISO_DATE_EXT} -setcalendar,standard ${INPUT_FILENAME2} temp2.nc
+cdo -f nc ifthen ${TARGET_MASK} -remapbil,${TARGET_GRID} temp2.nc ${OUTPUT_TARBALL_NAME}.nc
 
 # tar
 tar cjf ${OUTPUT_TARBALL_NAME}.tar.bz2 ${OUTPUT_TARBALL_NAME}.nc

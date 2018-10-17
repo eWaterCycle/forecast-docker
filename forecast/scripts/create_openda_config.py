@@ -35,8 +35,6 @@ if __name__ == '__main__':
 
     #dict with all replacements
     replacements = {
-        'starttime': os.getenv('STARTTIME'),
-        'endtime':os.getenv('ENDTIME'),
         'ensemble_member_count': os.getenv('ENSEMBLE_MEMBER_COUNT'),
         'state_write_time': os.getenv('STATE_WRITE_TIME'),
         'model_hosts': os.getenv('MODEL_HOSTS'),

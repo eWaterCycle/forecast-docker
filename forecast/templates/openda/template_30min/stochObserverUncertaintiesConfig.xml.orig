@@ -3,7 +3,7 @@
 	<!-- ProbabilityDistributionFunction or VariationPerParameter -->
 	<uncertaintyType>ProbabilityDistributionFunction</uncertaintyType>
 	<!-- tell OpenDA to put noise on one or more observation exchangeItems -->
-    <!-- this variable changed names due to ncl_convert supporting the grib format better <probabilityDistributionFunction id="VAR_40_GDS4_SFC" isActive="true"> -->
+    <!-- this variable changed names due to ncl_convert supporting the grib format better <probabilityDistributionFunction id="SWI1_GDS4_SFC" isActive="true"> -->
 	<probabilityDistributionFunction id="SWI1_GDS4_SFC" isActive="true">
 		<normal mean="0" stdv="0.2" stdvIsFactor="false"/>
 	</probabilityDistributionFunction>

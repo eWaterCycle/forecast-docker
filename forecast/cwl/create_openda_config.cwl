@@ -9,16 +9,10 @@ hints:
 requirements:
   EnvVarRequirement:
     envDef:
-      STARTTIME: $(inputs.starttime)
-      ENDTIME: $(inputs.endtime)
       ENSEMBLE_MEMBER_COUNT: $(inputs.ensemble_member_count)
       STATE_WRITE_TIME: $(inputs.state_write_time)
       MODEL_HOSTS: $(inputs.model_hosts)
 inputs:
-  starttime:
-    type: string
-  endtime:
-    type: string
   ensemble_member_count:
     type: int
   state_write_time:
