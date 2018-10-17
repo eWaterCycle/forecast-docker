@@ -13,6 +13,9 @@ apt-get -y upgrade
 
 # Install dependencies
 RUN apt-get -y install \
+    tzdata
+
+RUN apt-get -y install \
     ant \
     python \
     python-numpy \
@@ -23,6 +26,13 @@ RUN apt-get -y install \
     default-jdk \
     wget \
     git
+
+RUN apt-get -y install \
+    cdo
+
+RUN apt-get -y install \
+    nco \
+    ncl-ncarg
 
 # set workdir
 WORKDIR /usr/src

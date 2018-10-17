@@ -13,13 +13,15 @@ set -o nounset -o errexit
 #     x ref = "http://www.uncertml.org/statistics/statistics-collection"
 
 #copy forecast output files to working directory
-cp $IO_DIR/forecast/forecast/member??-discharge_dailyTot_output.nc .
+#cp $IO_DIR/forecast/forecast/member??-discharge_dailyTot_output.nc .
+mkdir temp/
+tar -xjf ${INPUT_TARBALL} -C temp/
 
 # make a file with the ensemble mean.
-cdo ensmean member??-discharge_dailyTot_output.nc dischargeEnsMeanOut.nc 
+cdo ensmean temp/forecast/member??-discharge_dailyTot_output.nc dischargeEnsMeanOut.nc 
 
 # make a file with the ensemble standard deviation
-cdo ensstd member??-discharge_dailyTot_output.nc dischargeEnsStdOut.nc
+cdo ensstd temp/forecast/member??-discharge_dailyTot_output.nc dischargeEnsStdOut.nc
 
 #change the name of the standard deviation to discharge_error, save in a temp file
 cdo setname,discharge_error dischargeEnsStdOut.nc dischargeEnsStdOutTemp.nc
@@ -43,4 +45,5 @@ ncrename -v template_group,discharge_group dischargeEns.nc
 ncatted -a ancillary_variables,discharge_group,o,c,"discharge discharge_error" dischargeEns.nc
 
 #copy output to shared folder
-cp dischargeEns.nc $IO_DIR/postprocess/
+#cp dischargeEns.nc $IO_DIR/postprocess/
+tar cjf ${OUTPUT_TARBALL_NAME}.tar.bz2 dischargeEns.nc
