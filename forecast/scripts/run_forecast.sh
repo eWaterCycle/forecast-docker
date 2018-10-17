@@ -56,7 +56,7 @@ do
     if [[ "$ensembleMember" -eq "0" ]]
     then
         PRECIPITATION_FILE=temp/out/precipEnsMem01.nc
-        TEMPERATURE_FILE=temp.out/precipEnsMem01.nc
+        TEMPERATURE_FILE=temp/out/precipEnsMem01.nc
     fi
 
 
