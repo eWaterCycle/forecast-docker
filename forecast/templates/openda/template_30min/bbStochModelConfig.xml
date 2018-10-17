@@ -10,7 +10,7 @@
 		</state>
 		<predictor>
 			<!-- tell OpenDA which observation exchangeItem(s) should be used for determining the innovation during the analysis and which modelExchangeItem corresponds to which observationExchangeItem -->
-			<vector id="VAR_40_GDS4_SFC" sourceVectorId="top_layer_soil_saturation"/>
+			<vector id="SWI1_GDS4_SFC" sourceVectorId="top_layer_soil_saturation"/>
 		</predictor>
 	</vectorSpecification>
 </blackBoxStochModel>
