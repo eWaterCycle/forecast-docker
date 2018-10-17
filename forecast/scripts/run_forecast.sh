@@ -30,6 +30,8 @@ echo ensemble_count: $ENSEMBLE_MEMBER_COUNT
 tar xvf $INPUT_STATE
 tar xvf $ENSEMBLE_FORCING
 
+tar xvf $HYDROWORLD -C /tmp
+
 #As this for loop runs up to _and_including_ the given value, we
 #Get an additional member (0) for the main OpenDA model
 for ensembleMember in $(seq 0 $ENSEMBLE_MEMBER_COUNT)

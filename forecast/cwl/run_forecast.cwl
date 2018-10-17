@@ -15,6 +15,7 @@ requirements:
       ENSEMBLE_MEMBER_COUNT: $(inputs.ensemble_count)
       INPUT_STATE: $(inputs.input_state.path)
       ENSEMBLE_FORCING: $(inputs.ensemble_forcing.path)
+      HYDROWORLD: $(inputs.hydroworld.path)      
 inputs:
   openda_config:
     type: File
@@ -28,7 +29,9 @@ inputs:
     type: File
   ensemble_forcing:
     type: File
-    
+  hydroworld:
+    type: File
+
 outputs:
   forecast:
     type: File
