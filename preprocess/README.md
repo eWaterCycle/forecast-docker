@@ -8,4 +8,4 @@
 `cwl-runner cwl/preprocess_deterministic_forcing.cwl --input_tarball ../data/gfs_20181014.tar.bz2`
 
 # Ensemble forcing preprocessing cwl command:
-`cwl-runner cwl/preprocess_ensemble_forcing.cwl --input_ensemble_tarball ../data/gefs_20181014.tar.bz2
+`cwl-runner cwl/preprocess_ensemble_forcing.cwl --input_ensemble_tarball ../data/gefs_20181014.tar.bz2`
