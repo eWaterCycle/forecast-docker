@@ -50,15 +50,15 @@ do
     cp -r $ENSEMBLE_INITIAL_DIR $INSTANCE_DIR/initial
 
     #copy forcings to instance
-    PRECIPITATION_FILE=temp/out/precipEnsMem$ensembleMemberPadded.nc
-    TEMPERATURE_FILE=temp/out/tempEnsMem$ensembleMemberPadded.nc
+    PRECIPITATION_FILE=precipEnsMem$ensembleMemberPadded.nc
+    TEMPERATURE_FILE=tempEnsMem$ensembleMemberPadded.nc
 
     #Ensemble member 0 (the main model in OpenDA terms) does not need its own forcings as it is not actually run.
     #Borrow forcing files from member 01 so the model does not complain about lack of forcing files
     if [[ "$ensembleMember" -eq "0" ]]
     then
-        PRECIPITATION_FILE=temp/out/precipEnsMem01.nc
-        TEMPERATURE_FILE=temp/out/precipEnsMem01.nc
+        PRECIPITATION_FILE=precipEnsMem01.nc
+        TEMPERATURE_FILE=precipEnsMem01.nc
     fi
 
 
