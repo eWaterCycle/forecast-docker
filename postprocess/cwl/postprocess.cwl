@@ -18,6 +18,7 @@ inputs:
   uncertainty_template_file:
     type: File
   output_tarball_name:
+    default: output_postprocessing
     type: string
 
 outputs:
