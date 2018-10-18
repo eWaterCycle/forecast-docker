@@ -71,5 +71,4 @@ done
 mkdir temp/out/
 cp tempEnsMem??.nc temp/out/
 cp precipEnsMem??.nc temp/out/
-cd temp/out
-tar cjf ${OUTPUT_TARBALL_NAME}.tar.bz2 *
+tar cjf ${OUTPUT_TARBALL_NAME}.tar.bz2 -C temp/out .
