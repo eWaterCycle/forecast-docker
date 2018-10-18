@@ -22,6 +22,9 @@ RUN apt-get -y install \
     sudo \
     default-jdk \
     wget \
+    python-thrift \
+    python-netcdf4 \
+    cython \
     git
 
 # set workdir
@@ -41,6 +44,8 @@ ARG PCR-GLOBWB_model_tag=v2.0_alpha_ewatercycle
 RUN git clone https://github.com/eWaterCycle/PCR-GLOBWB_model.git && \
     cd PCR-GLOBWB_model && \
     git checkout tags/v2.0_alpha_ewatercycle 2> /dev/null
+
+RUN cd PCR-GLOBWB_model/model && python setup.py install
 
 # install openDA
 RUN mkdir -p /usr/src && \
