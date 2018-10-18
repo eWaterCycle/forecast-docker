@@ -25,6 +25,8 @@ RUN apt-get -y install \
     python-thrift \
     python-netcdf4 \
     cython \
+    nano \
+    gdal-bin \
     git
 
 # set workdir
