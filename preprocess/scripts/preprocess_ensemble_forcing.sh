@@ -4,6 +4,7 @@
 #
 # uses environment variables:
 #     INPUT_TARBALL: for input for this cycle point
+#     DETERMINISTIC_FORCING_OUTPUT_TARBALL: the output tarball of the deterministic forcing preprocessing step
 #     GRIB_PRECIPITATION_PARAMETER: the precipitation parameter to be selected from the grib input file, typically "8.1.0"
 #     GRIB_TEMPERATURE_PARAMETER: the temperature parameter to be selected from the grib input file, typically "0.0.0"
 #     NETCDF_FILLVALUE: the value to be used as fillvalue in the netcdf output, typically "1.0E20"
@@ -15,7 +16,7 @@ set -o nounset -o errexit
 
 # unzip the input tarball and the output of the deterministic forcing step into temp/
 mkdir temp/
-tar -xjf ${DETERMINISTIC_OUTPUT_TARBALL} -C temp/
+tar -xjf ${DETERMINISTIC_FORCING_OUTPUT_TARBALL} -C temp/
 tar -xjf ${INPUT_TARBALL} -C temp/
 
 # Select GRIB_PRECIPITATION_PARAMETER and GRIB_TEMPERATURE_PARAMETER variables from the downloaded input.
@@ -68,7 +69,4 @@ do
 done
 
 # tar and bzip the result into the OUTPUT_TARBALL_NAME
-mkdir temp/out/
-cp tempEnsMem??.nc temp/out/
-cp precipEnsMem??.nc temp/out/
-tar cjf ${OUTPUT_TARBALL_NAME}.tar.bz2 -C temp/out .
+tar cjf ${OUTPUT_TARBALL_NAME}.tar.bz2 tempEnsMem??.nc precipEnsMem??.nc

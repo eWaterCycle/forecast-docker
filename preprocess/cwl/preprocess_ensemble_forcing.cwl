@@ -14,7 +14,7 @@ requirements:
   EnvVarRequirement:
     envDef:
       INPUT_TARBALL: $(inputs.input_tarball.path)
-      DETERMINISTIC_OUTPUT_TARBALL: $(inputs.deterministic_output_tarball.path)
+      DETERMINISTIC_FORCING_OUTPUT_TARBALL: $(inputs.deterministic_forcing_output_tarball.path)
       GRIB_PRECIPITATION_PARAMETER: $(inputs.grib_precipitation_paramameter)
       GRIB_TEMPERATURE_PARAMETER: $(inputs.grib_temperature_paramameter)
       NETCDF_FILLVALUE: $(inputs.netcdf_fillvalue)
@@ -23,8 +23,7 @@ requirements:
 inputs:
   input_tarball:
     type: File
-  deterministic_output_tarball:
-    default: output_deterministic_forcing.tar.bz2
+  deterministic_forcing_output_tarball:
     type: File
   grib_precipitation_paramameter:
     default: 8.1.0
@@ -36,7 +35,6 @@ inputs:
     default: 1.0E20
     type: float
   target_grid:
-    default: grids/30min.grid.txt
     type: File
   output_tarball_name:
     default: output_ensemble_forcing
