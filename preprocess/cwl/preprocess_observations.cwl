@@ -21,14 +21,8 @@ inputs:
     type: int
   target_mask:
     type: File
-    default:
-      class: File
-      location: grids/30min.grid.model.mask.nc
   target_grid:
     type: File
-    default:
-      class: File
-      location: grids/30min.grid.txt
   output_tarball_name:
     default: output_observations
     type: string
