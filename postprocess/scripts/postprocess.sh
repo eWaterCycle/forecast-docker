@@ -7,13 +7,13 @@ set -o nounset -o errexit
 # this script uses both CDO and NCO operators! Both these packages need
 # to be installed on your machine.
 
-# This script uses the uncertaintyTemplate.nc file 
+# This script uses the uncertaintyTemplate from the UNCERTAINTY_TEMPLATE_NC_FILE file 
 #   which contains one variable: template_group, with two attributes:
 #     x ancillary_variables (will be set by this script)
 #     x ref = "http://www.uncertml.org/statistics/statistics-collection"
 
-#copy forecast output files to working directory
-#cp $IO_DIR/forecast/forecast/member??-discharge_dailyTot_output.nc .
+# get forecast output files from the INPUT_TARBALL and put them into temp/
+# these files should look like forecast/member??-discharge_dailyTot_output.nc
 mkdir temp/
 tar -xjf ${INPUT_TARBALL} -C temp/
 
@@ -32,7 +32,7 @@ cdo merge dischargeEnsMeanOut.nc dischargeEnsStdOutTemp.nc dischargeEns.nc
 # merge the uncertaintyTemplate into dischargeEns.nc. 
 # this is done with NCO operator ncks because CDO has problems with merging
 # empty (no data, only meta) files.
-ncks -A $UNCERTAINTY_TEMPLATE_FILE dischargeEns.nc
+ncks -A $UNCERTAINTY_TEMPLATE_NC_FILE dischargeEns.nc
 
 # add the "ref" attribute to the dischare_error and the discharge variables
 ncatted -a ref,discharge_error,o,c,http://www.uncertml.org/statistics/standard-deviation -a ref,discharge,o,c,http://www.uncertml.org/statistics/mean dischargeEns.nc
@@ -44,6 +44,5 @@ ncrename -v template_group,discharge_group dischargeEns.nc
 # we indicate that the discharge and the discharge_uncertaunty form a group.
 ncatted -a ancillary_variables,discharge_group,o,c,"discharge discharge_error" dischargeEns.nc
 
-#copy output to shared folder
-#cp dischargeEns.nc $IO_DIR/postprocess/
+# make the output tarball (with just one file, but for consistency)
 tar cjf ${OUTPUT_TARBALL_NAME}.tar.bz2 dischargeEns.nc
