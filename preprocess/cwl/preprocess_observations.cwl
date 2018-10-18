@@ -20,11 +20,15 @@ inputs:
   iso_date:
     type: int
   target_mask:
-    default: grids/30min.grid.model.mask.nc
     type: File
+    default:
+      class: File
+      location: grids/30min.grid.model.mask.nc
   target_grid:
-    default: grids/30min.grid.txt
     type: File
+    default:
+      class: File
+      location: grids/30min.grid.txt
   output_tarball_name:
     default: output_observations
     type: string
