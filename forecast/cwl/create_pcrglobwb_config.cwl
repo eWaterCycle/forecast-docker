@@ -2,7 +2,7 @@
 
 cwlVersion: v1.0
 class: CommandLineTool
-baseCommand: create_pcrglobwb_config.py
+baseCommand: run_create_pcrglobwb_config.sh
 hints:
   DockerRequirement:
     dockerImageId: ewtrcycl:ewtrcyclforecast
