@@ -20,11 +20,15 @@ inputs:
   iso_date:
     type: int
   target_mask:
+    default: grids/30min.grid.model.mask.nc
     type: File
   target_grid:
+    default: grids/30min.grid.txt
     type: File
   output_tarball_name:
+    default: output_observations
     type: string
+
 outputs:
   preprocess_observations:
     type: File

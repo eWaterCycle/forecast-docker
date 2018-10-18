@@ -31,6 +31,7 @@ inputs:
     default: 1.0E20
     type: float
   output_tarball_name:
+    default: output_deterministic_forcing
     type: string
 
 outputs:
