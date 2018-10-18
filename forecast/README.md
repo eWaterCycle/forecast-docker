@@ -10,7 +10,7 @@ docker-compose build
 Run CWL to configure:
 ```
 cwl-runner ./forecast-docker/forecast/cwl/create_openda_config.cwl \
-  --ensemble_member_count 2 --model_hosts <hostname> --state_write_time 201810160000
+  --ensemble_member_count 2 --model_hosts <hostname> --state_write_time 20181016
 cwl-runner ./forecast-docker/forecast/cwl/create_pcrglobwb_config.cwl \
   --starttime 20181016 --endtime 20181018 
 ```
