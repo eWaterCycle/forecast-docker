@@ -13,7 +13,7 @@ hints:
 requirements:
   EnvVarRequirement:
     envDef:
-      INPUT_ENSEMBLE_TARBALL: $(inputs.input_ensemble_tarball.path)
+      INPUT_TARBALL: $(inputs.input_tarball.path)
       DETERMINISTIC_OUTPUT_TARBALL: $(inputs.deterministic_output_tarball.path)
       GRIB_PRECIPITATION_PARAMETER: $(inputs.grib_precipitation_paramameter)
       GRIB_TEMPERATURE_PARAMETER: $(inputs.grib_temperature_paramameter)
@@ -21,7 +21,7 @@ requirements:
       TARGET_GRID: $(inputs.target_grid.path)
       OUTPUT_TARBALL_NAME: $(inputs.output_tarball_name)
 inputs:
-  input_ensemble_tarball:
+  input_tarball:
     type: File
   deterministic_output_tarball:
     type: File
@@ -35,6 +35,7 @@ inputs:
     default: 1.0E20
     type: float
   target_grid:
+    default: grids/30min.grid.txt
     type: File
   output_tarball_name:
     type: string
