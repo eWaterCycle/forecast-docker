@@ -24,6 +24,7 @@ inputs:
   input_tarball:
     type: File
   deterministic_output_tarball:
+    default: output_deterministic_forcing.tar.bz2
     type: File
   grib_precipitation_paramameter:
     default: 8.1.0
@@ -38,6 +39,7 @@ inputs:
     default: grids/30min.grid.txt
     type: File
   output_tarball_name:
+    default: output_ensemble_forcing
     type: string
 
 outputs:

@@ -16,7 +16,7 @@ set -o nounset -o errexit
 # unzip the input tarball and the output of the deterministic forcing step into temp/
 mkdir temp/
 tar -xjf ${DETERMINISTIC_OUTPUT_TARBALL} -C temp/
-tar -xjf ${INPUT_ENSEMBLE_TARBALL} -C temp/
+tar -xjf ${INPUT_TARBALL} -C temp/
 
 # Select GRIB_PRECIPITATION_PARAMETER and GRIB_TEMPERATURE_PARAMETER variables from the downloaded input.
 for ensembleMember in {01..20}
