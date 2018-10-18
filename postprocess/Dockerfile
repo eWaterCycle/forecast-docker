@@ -38,6 +38,7 @@ ENV PATH=/usr/src/scripts:${PATH}
 # copy scripts inside docker image
 RUN mkdir -p /usr/src/scripts
 COPY scripts /usr/src/scripts
+RUN chmod +x /usr/src/scripts/*.sh
 
 # command
 CMD echo "pinkelen"
