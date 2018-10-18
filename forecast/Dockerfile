@@ -4,7 +4,7 @@
 # use ubuntua 18.04 as base
 FROM ubuntu:18.04
 
-LABEL maintainer=rvanharen
+LABEL maintainer=ewtrcycl
 LABEL version=0.1
 
 # update repositories

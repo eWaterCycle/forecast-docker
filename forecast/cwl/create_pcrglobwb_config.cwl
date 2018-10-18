@@ -5,7 +5,7 @@ class: CommandLineTool
 baseCommand: create_pcrglobwb_config.py
 hints:
   DockerRequirement:
-    dockerImageId: rvanharen:ewtrcyclforecast
+    dockerImageId: ewtrcycl:ewtrcyclforecast
 requirements:
   EnvVarRequirement:
     envDef:
