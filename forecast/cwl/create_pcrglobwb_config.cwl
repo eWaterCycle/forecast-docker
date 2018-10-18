@@ -13,6 +13,7 @@ requirements:
       ENDTIME: $(inputs.endtime)
       HYDROWORLD_LOCATION: $(inputs.hydroworld_location)
       PCRGLOBWB_CONFIG_TEMPLATE: $(inputs.config_template)
+      ZERO_STATE: $(inputs.zerostate)
 inputs:
   starttime:
     type: string
@@ -24,6 +25,9 @@ inputs:
   config_template:
     type: string
     default: 'template-30min.ini'
+  zerostate:
+    type: string
+    default: no
 outputs:
   pcrglobwb_config:
     type: File
