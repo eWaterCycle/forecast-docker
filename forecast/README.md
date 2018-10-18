@@ -34,4 +34,4 @@ a set of model states and hydroworld.tar.gz the state independent input model da
 
 ## caveats ##
 
-Need to check that the correct state is written and copied (ie the state_write_time). the input dates and times need to be checked and their internal use. Document which meteo forecast and observational data needs to be downloaded and preprocessed. Maybe change the input starttime+endtime+state_write_time to starttime+forecast period+state_write_offset. Fix defaults for forecast period and state write offset? 
+Need to check that the correct state is written and copied (ie the state_write_time). the input dates and times need to be checked and their internal use. Document which meteo forecast and observational data needs to be downloaded and preprocessed. Maybe change the input starttime+endtime+state_write_time to starttime+forecast period+state_write_offset. Fix defaults for forecast period and state write offset? Maybe tag the output file names with corresponding dates.
