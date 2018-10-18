@@ -40,4 +40,4 @@ outputs:
   new_state:
     type: File
     outputBinding:
-      glob: new_state.tar.gz
+      glob: output_state.tar.gz
