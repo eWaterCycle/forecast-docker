@@ -6,5 +6,5 @@ services:
     ewtrcyclforecast:
         build:
             context: .
-        image: "rvanharen:ewtrcyclforecast"
+        image: "ewtrcycl:ewtrcyclforecast"
         container_name: ewtrcyclforecast
