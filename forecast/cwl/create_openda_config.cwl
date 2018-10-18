@@ -10,7 +10,7 @@ requirements:
   EnvVarRequirement:
     envDef:
       ENSEMBLE_MEMBER_COUNT: $(inputs.ensemble_member_count)
-      STATE_WRITE_TIME: $(inputs.state_write_time)
+      STATE_WRITE_TIME: $(inputs.state_write_time)0000
       MODEL_HOSTS: $(inputs.model_hosts)
 inputs:
   ensemble_member_count:
@@ -19,6 +19,7 @@ inputs:
     type: string
   model_hosts:
     type: string
+    default: ""
 outputs:
   PCRGlobWB_ModelFactoryConfig:
     type: File
