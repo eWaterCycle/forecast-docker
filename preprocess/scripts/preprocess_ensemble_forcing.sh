@@ -44,22 +44,22 @@ done
 cdo ensmean precipEnsMem??.grib2 precipEnsMeanOut.grib2
 cdo ensmean tempEnsMem??.grib2 tempEnsMeanOut.grib2
 
-# for each ensemble member, calculate diff from mean, upscale to high res and add 
+# for each ensemble member, calculate diff from mean, upscale to high res and add
 # for details on operations done see the deterministic preprocessing script
 # finally, the files are interpolated (re-mapped) to the resolution of {TARGET_GRID},
 # which is of the resolution of the model.
 
 for ensembleMember in {01..20}
 do
-    # we've cut this cdo command up into seperate commands because it was more stable in a docker container (malloc/segfault issues)    
+    # we've cut this cdo command up into seperate commands because it was more stable in a docker container (malloc/segfault issues)
     cdo -f nc sub precipEnsMem${ensembleMember}.grib2 precipEnsMeanOut.grib2 temp.nc
     cdo -f nc setname,precipitation -daysum -settime,00:00:00 -mulc,0.001 temp.nc temp2.nc
     cdo -f nc remapnn,temp/forcingPrecipDailyOut.nc -setmissval,${NETCDF_FILLVALUE} temp2.nc temp3.nc
-    cdo -f nc setrtoc,-100,0.0,0.0 -add temp/forcingPrecipDailyOut.nc temp3.nc GFSResPrecipEnsMem${ensembleMember}.nc    
+    cdo -f nc setrtoc,-100,0.0,0.0 -add temp/forcingPrecipDailyOut.nc temp3.nc GFSResPrecipEnsMem${ensembleMember}.nc
 
     cdo -f nc remapbil,${TARGET_GRID} GFSResPrecipEnsMem${ensembleMember}.nc precipEnsMem${ensembleMember}.nc
 
-    # we've cut this cdo command up into seperate commands because it was more stable in a docker container (malloc/segfault issues)    
+    # we've cut this cdo command up into seperate commands because it was more stable in a docker container (malloc/segfault issues)
     cdo -f nc sub tempEnsMem${ensembleMember}.grib2 tempEnsMeanOut.grib2 temp.nc
     cdo -f nc setname,temperature -settime,00:00:00 -setunit,C -dayavg temp.nc temp2.nc
     cdo -f nc add temp/forcingTempDailyOut.nc -remapnn,temp/forcingTempDailyOut.nc -setmissval,${NETCDF_FILLVALUE} temp2.nc GFSResTempEnsMem${ensembleMember}.nc
@@ -71,4 +71,5 @@ done
 mkdir temp/out/
 cp tempEnsMem??.nc temp/out/
 cp precipEnsMem??.nc temp/out/
-tar cjf ${OUTPUT_TARBALL_NAME}.tar.bz2 temp/out/*
+cd temp/out
+tar cjf ${OUTPUT_TARBALL_NAME}.tar.bz2 *
