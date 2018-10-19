@@ -6,5 +6,5 @@ services:
     ewtrcyclforecast:
         build:
             context: .
-        image: "ewtrcycl:ewtrcyclforecast_preprocess"
+        image: "ewatercycle/ewtrcycl:ewtrcyclforecast_preprocess"
         container_name: ewtrcyclforecast_preprocess
