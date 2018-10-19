@@ -9,7 +9,7 @@ class: CommandLineTool
 baseCommand: preprocess_ensemble_forcing.sh
 hints:
   DockerRequirement:
-    dockerImageId: ewtrcycl:ewtrcyclforecast_preprocess
+    dockerImageId: ewatercycle/ewtrcycl:ewtrcyclforecast_preprocess
 requirements:
   EnvVarRequirement:
     envDef:

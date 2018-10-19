@@ -5,7 +5,7 @@ class: CommandLineTool
 baseCommand: preprocess_observations.sh
 hints:
   DockerRequirement:
-    dockerImageId: ewtrcycl:ewtrcyclforecast_preprocess
+    dockerImageId: ewatercycle/ewtrcycl:ewtrcyclforecast_preprocess
 requirements:
   EnvVarRequirement:
     envDef:
