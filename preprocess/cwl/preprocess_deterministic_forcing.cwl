@@ -9,7 +9,7 @@ class: CommandLineTool
 baseCommand: preprocess_deterministic_forcing.sh
 hints:
   DockerRequirement:
-    dockerImageId: ewtrcycl:ewtrcyclforecast_preprocess
+    dockerImageId: ewatercycle/ewtrcycl:ewtrcyclforecast_preprocess
 requirements:
   EnvVarRequirement:
     envDef:
@@ -31,6 +31,7 @@ inputs:
     default: 1.0E20
     type: float
   output_tarball_name:
+    default: output_deterministic_forcing
     type: string
 
 outputs:

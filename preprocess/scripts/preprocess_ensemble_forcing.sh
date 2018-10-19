@@ -3,25 +3,27 @@
 # eWaterCycle preprocessing script for gefs ensemble forcing
 #
 # uses environment variables:
-#     IO_DIR, for input and output directory for this cycle point
-#     ISO_DATE and ISO_DATE_EXT, for date to process
-#     MODEL_GRID for definition of grid to resize forcings to, so that it is equal to the model grid
+#     INPUT_TARBALL: for input for this cycle point
+#     DETERMINISTIC_FORCING_OUTPUT_TARBALL: the output tarball of the deterministic forcing preprocessing step
+#     GRIB_PRECIPITATION_PARAMETER: the precipitation parameter to be selected from the grib input file, typically "8.1.0"
+#     GRIB_TEMPERATURE_PARAMETER: the temperature parameter to be selected from the grib input file, typically "0.0.0"
+#     NETCDF_FILLVALUE: the value to be used as fillvalue in the netcdf output, typically "1.0E20"
+#     TARGET_GRID for size of grid to resize observations to
+#     OUTPUT_TARBALL_NAME for the filename of the output tarball
 
 # stop the script if we use an unset variable, or a command fails
 set -o nounset -o errexit
 
-# copy input from shared input/output dir
-# cp $IO_DIR/download/gefs/* .
-# cp $IO_DIR/preprocess/deterministic/* .
+# unzip the input tarball and the output of the deterministic forcing step into temp/
 mkdir temp/
-tar -xjf ${DETERMINISTIC_OUTPUT_TARBALL} -C temp/
-tar -xjf ${INPUT_ENSEMBLE_TARBALL} -C temp/
+tar -xjf ${DETERMINISTIC_FORCING_OUTPUT_TARBALL} -C temp/
+tar -xjf ${INPUT_TARBALL} -C temp/
 
-#Select precipication and temperature variables from the downloaded input.
+# Select GRIB_PRECIPITATION_PARAMETER and GRIB_TEMPERATURE_PARAMETER variables from the downloaded input.
 for ensembleMember in {01..20}
 do
-    #Note we skip the first file for precip
-    #Since precip is only available after every 6 hours
+    # Note we skip the first file for precip
+    # Since precip is only available after every 6 hours
     for hour in 06 {12..192..6};
     do
         cdo selparam,${GRIB_PRECIPITATION_PARAMETER} temp/gep${ensembleMember}.t00z.pgrb2f${hour} precipEnsMem${ensembleMember}f${hour}.grib2
@@ -39,37 +41,32 @@ do
 
 done
 
-#calculate the ensmeble mean for both temperature and precipitation
+# calculate the ensmeble mean for both temperature and precipitation
 cdo ensmean precipEnsMem??.grib2 precipEnsMeanOut.grib2
 cdo ensmean tempEnsMem??.grib2 tempEnsMeanOut.grib2
 
-#for each ensemble member, calculate diff from mean, upscale to high res and add 
-#for details on operations done see the deterministic preprocessing script
-#finally, the files are interpolated (re-mapped) to the resolution of {MODEL_GRID_MASK},
-#which is of the resolution of the model.
+# for each ensemble member, calculate diff from mean, upscale to high res and add
+# for details on operations done see the deterministic preprocessing script
+# finally, the files are interpolated (re-mapped) to the resolution of {TARGET_GRID},
+# which is of the resolution of the model.
 
 for ensembleMember in {01..20}
 do
-    #  cdo -f nc setrtoc,-100,0.0,0.0 -add temp/forcingPrecipDailyOut.nc -remapnn,temp/forcingPrecipDailyOut.nc -setmissval,${NETCDF_FILLVALUE} -setname,precipitation -daysum -settime,00:00:00 -mulc,0.001 -sub precipEnsMem${ensembleMember}.grib2 precipEnsMeanOut.grib2 GFSResPrecipEnsMem${ensembleMember}.nc
+    # we've cut this cdo command up into seperate commands because it was more stable in a docker container (malloc/segfault issues)
     cdo -f nc sub precipEnsMem${ensembleMember}.grib2 precipEnsMeanOut.grib2 temp.nc
     cdo -f nc setname,precipitation -daysum -settime,00:00:00 -mulc,0.001 temp.nc temp2.nc
     cdo -f nc remapnn,temp/forcingPrecipDailyOut.nc -setmissval,${NETCDF_FILLVALUE} temp2.nc temp3.nc
-    cdo -f nc setrtoc,-100,0.0,0.0 -add temp/forcingPrecipDailyOut.nc temp3.nc GFSResPrecipEnsMem${ensembleMember}.nc    
+    cdo -f nc setrtoc,-100,0.0,0.0 -add temp/forcingPrecipDailyOut.nc temp3.nc GFSResPrecipEnsMem${ensembleMember}.nc
 
     cdo -f nc remapbil,${TARGET_GRID} GFSResPrecipEnsMem${ensembleMember}.nc precipEnsMem${ensembleMember}.nc
 
-    # cdo -f nc add temp/forcingTempDailyOut.nc -remapnn,temp/forcingTempDailyOut.nc -setmissval,${NETCDF_FILLVALUE} -setname,temperature -settime,00:00:00 -setunit,C -dayavg -sub tempEnsMem${ensembleMember}.grib2 tempEnsMeanOut.grib2 GFSResTempEnsMem${ensembleMember}.nc
+    # we've cut this cdo command up into seperate commands because it was more stable in a docker container (malloc/segfault issues)
     cdo -f nc sub tempEnsMem${ensembleMember}.grib2 tempEnsMeanOut.grib2 temp.nc
     cdo -f nc setname,temperature -settime,00:00:00 -setunit,C -dayavg temp.nc temp2.nc
     cdo -f nc add temp/forcingTempDailyOut.nc -remapnn,temp/forcingTempDailyOut.nc -setmissval,${NETCDF_FILLVALUE} temp2.nc GFSResTempEnsMem${ensembleMember}.nc
 
     cdo -f nc remapbil,${TARGET_GRID} GFSResTempEnsMem${ensembleMember}.nc tempEnsMem${ensembleMember}.nc
-
 done
 
-# copy output to shared folder
-mkdir temp/out/
-cp tempEnsMem??.nc temp/out/
-cp precipEnsMem??.nc temp/out/
-
-tar cjf ${OUTPUT_TARBALL_NAME}.tar.bz2 temp/out/*
+# tar and bzip the result into the OUTPUT_TARBALL_NAME
+tar cjf ${OUTPUT_TARBALL_NAME}.tar.bz2 tempEnsMem??.nc precipEnsMem??.nc

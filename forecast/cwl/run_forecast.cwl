@@ -5,7 +5,7 @@ class: CommandLineTool
 baseCommand: run_forecast.sh
 hints:
   DockerRequirement:
-    dockerImageId: rvanharen:ewtrcyclforecast
+    dockerImageId: ewatercycle/ewtrcycl:ewtrcyclforecast
 requirements:
   EnvVarRequirement:
     envDef:
@@ -40,4 +40,4 @@ outputs:
   new_state:
     type: File
     outputBinding:
-      glob: new_state.tar.gz
+      glob: output_state.tar.gz

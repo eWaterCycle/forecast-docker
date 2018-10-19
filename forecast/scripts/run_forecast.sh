@@ -7,73 +7,73 @@
 set -o nounset -o errexit
 
 #copy openda config to current working directory
-tar xvf $OPENDA_CONFIG
+tar xvf ${OPENDA_CONFIG}
 
 #copy observations to openda config folder
-tar xvf $OBSERVATION
+tar xvf ${OBSERVATION}
 
-OBS=$(basename "$OBSERVATION" | cut -d. -f1)
-mv $OBS.nc openda_config/h14_observations.nc
+OBS=$(basename "${OBSERVATION}" | cut -d. -f1)
+mv ${OBS}.nc openda_config/h14_observations.nc
 
 #copy model
-cp -r $PCRGLOBWB_MODEL_DIR PCR-GLOBWB
+cp -r ${PCRGLOBWB_MODEL_DIR} PCR-GLOBWB
 
 #needed for openda
 mkdir model_template
 
-cp $PCRGLOBWB_CONFIG model_template
+cp ${PCRGLOBWB_CONFIG} model_template
 
 find
 
-echo ensemble_count: $ENSEMBLE_MEMBER_COUNT
+echo ensemble_count: ${ENSEMBLE_MEMBER_COUNT}
 
-tar xvf $INPUT_STATE
-tar xvf $ENSEMBLE_FORCING
+tar xvf ${INPUT_STATE}
+tar xvf ${ENSEMBLE_FORCING}
 
-tar xvf $HYDROWORLD -C /tmp
+tar xvf ${HYDROWORLD} -C /tmp
 
 #As this for loop runs up to _and_including_ the given value, we
 #Get an additional member (0) for the main OpenDA model
 for ensembleMember in $(seq 0 $ENSEMBLE_MEMBER_COUNT)
 do
     #also create a padded version of the number
-    printf -v ensembleMemberPadded '%02d' $ensembleMember
+    printf -v ensembleMemberPadded '%02d' ${ensembleMember}
 
-    INSTANCE_DIR=work$ensembleMember
-    mkdir $INSTANCE_DIR
+    INSTANCE_DIR=work${ensembleMember}
+    mkdir ${INSTANCE_DIR}
 
     # copy config to instance
-    cp $PCRGLOBWB_CONFIG $INSTANCE_DIR
+    cp ${PCRGLOBWB_CONFIG} ${INSTANCE_DIR}
 
     #copy initial state to instance
-    ENSEMBLE_INITIAL_DIR="state/state-member$ensembleMemberPadded"
-    cp -r $ENSEMBLE_INITIAL_DIR $INSTANCE_DIR/initial
+    ENSEMBLE_INITIAL_DIR="state/state-member${ensembleMemberPadded}"
+    cp -r ${ENSEMBLE_INITIAL_DIR} ${INSTANCE_DIR}/initial
 
     #copy forcings to instance
-    PRECIPITATION_FILE=temp/out/precipEnsMem$ensembleMemberPadded.nc
-    TEMPERATURE_FILE=temp/out/tempEnsMem$ensembleMemberPadded.nc
+    PRECIPITATION_FILE=precipEnsMem${ensembleMemberPadded}.nc
+    TEMPERATURE_FILE=tempEnsMem${ensembleMemberPadded}.nc
 
     #Ensemble member 0 (the main model in OpenDA terms) does not need its own forcings as it is not actually run.
     #Borrow forcing files from member 01 so the model does not complain about lack of forcing files
-    if [[ "$ensembleMember" -eq "0" ]]
+    if [[ "${ensembleMember}" -eq "0" ]]
     then
-        PRECIPITATION_FILE=temp/out/precipEnsMem01.nc
-        TEMPERATURE_FILE=temp/out/precipEnsMem01.nc
+        PRECIPITATION_FILE=precipEnsMem01.nc
+        TEMPERATURE_FILE=precipEnsMem01.nc
     fi
 
 
-    cp $PRECIPITATION_FILE $INSTANCE_DIR/precipitation.nc
-    cp $TEMPERATURE_FILE $INSTANCE_DIR/temperature.nc
+    cp ${PRECIPITATION_FILE} ${INSTANCE_DIR}/precipitation.nc
+    cp ${TEMPERATURE_FILE} ${INSTANCE_DIR}/temperature.nc
 done
 
 #remember workdir
 WORKDIR=$PWD
 
 #set openda variables (as per install instructions)
-export OPENDADIR=$OPENDA_DIR/bin
-export PATH=$OPENDADIR:$PATH
+export OPENDADIR=${OPENDA_DIR}/bin
+export PATH=${OPENDADIR}:${PATH}
 export OPENDA_NATIVE=linux64_gnu
-export OPENDALIB=$OPENDADIR/$OPENDA_NATIVE/lib
+export OPENDALIB=${OPENDADIR}/${OPENDA_NATIVE}/lib
 
 #Workdir needs to be openda bin dir for OpenDA to work properly
 cd $OPENDADIR
@@ -83,8 +83,8 @@ cd $OPENDADIR
 # - Prints to the console instead of to a logfile
 # - Does not set LD_LIBRARY_PATH (causing conflics as it contains a lot of basic libraries such as sqlite and netcdf)
 # - Sets java.library.path to still have native libraries available to OpenDA
-echo "oda_run_console.sh $WORKDIR/openda_config/ewatercycle.oda"
-oda_run_console.sh $WORKDIR/openda_config/ewatercycle.oda
+echo "oda_run_console.sh ${WORKDIR}/openda_config/ewatercycle.oda"
+oda_run_console.sh ${WORKDIR}/openda_config/ewatercycle.oda
 
 
 #retore original workdir
@@ -95,8 +95,8 @@ cd $WORKDIR
 OUTPUT_DIR=forecast
 
 #make sure we get a clean output dir
-rm -rf $OUTPUT_DIR
-mkdir $OUTPUT_DIR
+rm -rf ${OUTPUT_DIR}
+mkdir ${OUTPUT_DIR}
 
 for ensembleMember in $(seq 0 $ENSEMBLE_MEMBER_COUNT)
 do
@@ -117,5 +117,5 @@ do
 
 done
 
-tar cvzf forecast.tar.gz forecast
-tar cvzf output_state.tar.gz -C output_state state
+tar cjf forecast.tar.bz2 forecast
+tar cjf output_state.tar.bz2 -C output_state state

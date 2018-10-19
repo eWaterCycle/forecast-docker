@@ -1,0 +1,10 @@
+---
+
+version: '3.6'
+
+services:
+    ewtrcyclforecast:
+        build:
+            context: .
+        image: "ewatercycle/ewtrcycl:ewtrcyclforecast_postprocess"
+        container_name: ewtrcyclforecast_postprocess
