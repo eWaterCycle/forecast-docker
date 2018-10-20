@@ -3,10 +3,9 @@
 SRC=$1
 DST=$2
 
-MOUNTPOINT=/mnt/onedata
-oneclient $MOUNTPOINT
+oneclient -i $MOUNTPOINT
 
 mkdir -p $MOUNTPOINT/$DST
-cp -r $SRC $MOUNTPOINT/$DST/
+cp -r $SRC $MOUNTPOINT
 
 oneclient -u $MOUNTPOINT

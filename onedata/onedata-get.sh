@@ -3,8 +3,9 @@
 SRC=$1
 DST=$2
 
-MOUNTPOINT=/mnt/onedata
-oneclient $MOUNTPOINT
+export MOUNTPOINT=/mnt/onedata
+mkdir -p $MOUNTPOINT
+oneclient
 
 cp -r $MOUNTPOINT/$SRC $DST/
 
