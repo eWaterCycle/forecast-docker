@@ -5,7 +5,7 @@ class: CommandLineTool
 baseCommand: postprocess.sh
 hints:
   DockerRequirement:
-    dockerImageId: ewatercycle/ewtrcycl:ewtrcyclforecast_postprocess
+    dockerImageId: ewatercycle/ewatercycle_forecast_postprocess
 requirements:
   EnvVarRequirement:
     envDef:

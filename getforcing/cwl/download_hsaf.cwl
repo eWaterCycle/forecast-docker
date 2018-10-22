@@ -5,7 +5,7 @@ class: CommandLineTool
 baseCommand: download_hsaf.sh
 hints:
   DockerRequirement:
-    dockerImageId: ewatercycle/ewtrcycl:ewtrcyclforecast_getforcing
+    dockerImageId: ewatercycle/ewatercycle_forecast_getforcing
 requirements:
   EnvVarRequirement:
     envDef:

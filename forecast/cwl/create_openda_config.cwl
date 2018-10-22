@@ -5,7 +5,7 @@ class: CommandLineTool
 baseCommand: run_create_openda_config.sh
 hints:
   DockerRequirement:
-    dockerImageId: ewatercycle/ewtrcycl:ewtrcyclforecast
+    dockerImageId: ewatercycle/ewatercycle_forecast
 requirements:
   EnvVarRequirement:
     envDef:

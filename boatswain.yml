@@ -1,11 +1,11 @@
 version: 1.0
 organisation: ewatercycle
 images:
-  ewtrcycl:ewtrcyclforecast:
+  ewatercycle_forecast:
     context: forecast
-  ewtrcycl:ewtrcyclforecast_getforcing:
+  ewatercycle_forecast_getforcing:
     context: getforcing
-  ewtrcycl:ewtrcyclforecast_postprocess:
+  ewatercycle_forecast_postprocess:
     context: postprocess
-  ewtrcycl:ewtrcyclforecast_preprocess:
+  ewatercycle_forecast_preprocess:
     context: preprocess
