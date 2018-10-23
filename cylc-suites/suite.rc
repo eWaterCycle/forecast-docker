@@ -9,9 +9,17 @@
 
 [runtime]
 	[[get_forcing]]
+	[[download_gfs]]
 		script = "cwl-runner $FORCING_DIR/download_gfs.cwl --iso_date $ISO_DATE"
+	[[download_gefs]]
+		script = "cwl-runner $FORCING_DIR/download_gefs.cwl --iso_date $ISO_DATE"
+		# script = "cwl-runner $FORCING_DIR/download_hsaf.cwl --hsaf_passwd $HSAF_PASSWD --hsaf_user $HSAF_USER --iso_date $ISO_DATE
 		[[[environment]]]
 			# relative path wrt suite dir
 			FORCING_DIR = "~/Projects/eWatercycle/forecast-docker/getforcing/cwl"
 			# include automatic generation of ISODATE from initial and final cyclepoint
 			ISO_DATE = "20181017"
+			#HSAF_PASSWD = A hsaf username and password can be obtained from H-SAF
+			#HSAF_USER =  A hsaf username and password can be obtained from H-SAF
+
+
