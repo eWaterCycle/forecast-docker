@@ -1,0 +1,17 @@
+[scheduling]
+	cycling mode = integer
+	initial cycle point = 1
+	final cycle point = 2
+
+[[dependencies]]
+	[[[P1]]]
+		graph = get_forcing
+
+[runtime]
+	[[get_forcing]]
+		script = "cwl-runner $FORCING_DIR/download_gfs.cwl --iso_date $ISO_DATE"
+		[[[environment]]]
+			# relative path wrt suite dir
+			FORCING_DIR = "~/Projects/eWatercycle/forecast-docker/getforcing/cwl"
+			# include automatic generation of ISODATE from initial and final cyclepoint
+			ISO_DATE = "20181017"
