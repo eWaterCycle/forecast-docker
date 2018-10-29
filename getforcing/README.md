@@ -14,9 +14,9 @@ cwl-runner ./forecast-docker/getforcing/cwl/download_gfs.cwl --iso_date 20181017
 cwl-runner ./forecast-docker/getforcing/cwl/download_gefs.cwl --iso_date 20181017
 ```
 The output of the three steps is three files:
-* output_observation.tar.bz2 (in the format: h14_${iso_date}_0000.grib.bz2)
-* deterministic_output_tarball.tar.bz2 (in the format: gfs_${iso_date}.tar.bz2)
-* output_ensemble.tar.bz2 (in the format: gefs_${iso_date}.tar.bz2)
+* Observation output: h14_${iso_date}_0000.grib.bz2
+* Deterministic output: gfs_${iso_date}.tar.bz2
+* Ensemble output: gefs_${iso_date}.tar.bz2
 
 These files are the input of the preprocessing steps.
 
