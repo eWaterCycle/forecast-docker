@@ -1,0 +1,68 @@
+#!jinja2
+%include settings.rc
+
+title = Running the forecast using CWL from Cylc
+
+[cylc]
+    UTC mode = True
+    cycle point format = %Y%m%d
+
+[scheduling]
+    initial cycle point = {{ initial_cycle_point }}
+    final cycle point = {{ final_cycle_point }}
+    [[dependencies]]
+        [[[P1D]]]
+            graph = """
+                download_gfs => preprocess_deterministic_forcing
+                download_gefs => preprocess_ensemble_forcing
+                download_hsaf => preprocess_observations
+            """
+
+[runtime]
+    [[get_forcing]]
+    [[download_gfs, download_gefs, download_hsaf]]
+        inherit = get_forcing
+
+    [[download_gfs]]
+        script = "cwl-runner $CYLC_SUITE_DEF_PATH/getforcing/cwl/download_gfs.cwl --iso_date $CYLC_TASK_CYCLE_POINT"
+
+    [[download_gefs]]
+        script = "cwl-runner $CYLC_SUITE_DEF_PATH/getforcing/cwl/download_gefs.cwl --iso_date $CYLC_TASK_CYCLE_POINT"
+
+    [[download_hsaf]]        
+        script = "cwl-runner $CYLC_SUITE_DEF_PATH/getforcing/cwl/download_hsaf.cwl --hsaf_passwd $HSAF_PASSWORD --hsaf_user $HSAF_USER --iso_date $CYLC_TASK_CYCLE_POINT"
+
+        [[[environment]]]
+            HSAF_PASSWORD = {{ hsaf_password }}
+            HSAF_USER = {{ hsaf_user }}
+
+    [[PREPROCESS]]
+    [[preprocess_deterministic_forcing, preprocess_ensemble_forcing, preprocess_observations, load_initial_state]]
+        inherit = PREPROCESS
+
+    [[preprocess_deterministic_forcing]]
+        script = """cwl-runner $CYLC_SUITE_DEF_PATH/preprocess/cwl/preprocess_observations.cwl \
+            --input_tarball ../download_hsaf/h14_${CYLC_TASK_CYCLE_POINT}_0000.grib.bz2 \
+            --iso_date $CYLC_TASK_CYCLE_POINT \
+            --target_grid $CYLC_SUITE_DEF_PATH/preprocess/grids/30min.grid.txt \
+            --target_mask $CYLC_SUITE_DEF_PATH/preprocess/grids/30min.grid.model.mask.nc
+         """
+    [[preprocess_ensemble_forcing]]
+        script = """cwl-runner cwl/preprocess_deterministic_forcing.cwl \
+            --input_tarball ../download_gfs/gfs_${CYLC_TASK_CYCLE_POINT}.tar.bz2
+        """
+    [[preprocess_observations]]
+        script = """cwl-runner cwl/preprocess_ensemble_forcing.cwl \
+            --input_tarball ../download_gefs/gefs_${CYLC_TASK_CYCLE_POINT}.tar.bz2 \
+            --deterministic_forcing_output_tarball output_deterministic_forcing.tar.bz2 \
+            --target_grid $CYLC_SUITE_DEF_PATH/preprocess/grids/30min.grid.txt
+        """
+
+
+[visualization]
+    default node attributes = "style=filled", "shape=ellipse"
+    [[node attributes]]
+        Forcing = "fillcolor=#00c798"
+        preprocessing = "fillcolor=#ffcc00"
+        Forecast = "fillcolor=#00b4fd"
+        postprocessing = "fillcolor=#ff5966"

@@ -1,5 +1,7 @@
 # forecast-docker
 
+Runs PGRCGLOB-WB global hydrology forecast using Cylc and CWL.
+
 # Dependencies
 
 ## Cylc
@@ -17,7 +19,7 @@ pip2 install cwlref-runner
 
 ## Docker
 
-Most tasks run inside in a Docker container. Follow [installation instructions](https://docs.docker.com/install/) so `docker` can be run as the user.
+Most tasks run inside in a Docker container by the cwl-runner. Follow [installation instructions](https://docs.docker.com/install/) so `docker` can be run as the user.
 
 # Steps
 
