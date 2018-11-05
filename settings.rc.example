@@ -1,0 +1,8 @@
+#Which forecast cycles to run (one per day).
+#Will pause automatically for any date in the future.
+{% set initial_cycle_point = "2018-11-03" %}
+{% set final_cycle_point = "2018-11-04" %}
+
+# Credentials for http://hsaf.meteoam.it
+{% set hsaf_user = "<Please fill me>" %}
+{% set hsaf_password = "<Please fill me>" %}

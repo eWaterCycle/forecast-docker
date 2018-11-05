@@ -29,3 +29,17 @@ The forecast consists of multiple steps. In order to get the forecast running, t
 * [Preprocess forcings and observations](preprocess/README.md)
 * [Configure and run forecast](forecast/README.md)
 * [Postprocess forecast output](postprocess/README.md)
+
+# Configuration
+
+Copy `settings.rc.example` to `settings.rc` and edit it.
+
+# Run
+
+```bash
+cylc register ewatercycle_forecast .
+
+cylc run ewatercycle_forecast
+
+cylc monitor ewatercycle_forecast
+```
