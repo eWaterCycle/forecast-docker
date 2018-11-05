@@ -22,4 +22,4 @@ These files are the input of the preprocessing steps.
 
 ## hsaf username and password ##
 
-A hsaf username and password can be obtained from [H-SAF](http://hsaf.meteoam.it])
+A hsaf username and password can be obtained from [H-SAF](http://hsaf.meteoam.it)
