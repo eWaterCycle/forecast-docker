@@ -48,11 +48,11 @@ title = Running the forecast using CWL from Cylc
             --target_mask $CYLC_SUITE_DEF_PATH/preprocess/grids/30min.grid.model.mask.nc
          """
     [[preprocess_ensemble_forcing]]
-        script = """cwl-runner cwl/preprocess_deterministic_forcing.cwl \
+        script = """cwl-runner $CYLC_SUITE_DEF_PATH/preprocess/cwl/preprocess_deterministic_forcing.cwl \
             --input_tarball ../download_gfs/gfs_${CYLC_TASK_CYCLE_POINT}.tar.bz2
         """
     [[preprocess_observations]]
-        script = """cwl-runner cwl/preprocess_ensemble_forcing.cwl \
+        script = """cwl-runner $CYLC_SUITE_DEF_PATH/preprocess/cwl/preprocess_ensemble_forcing.cwl \
             --input_tarball ../download_gefs/gefs_${CYLC_TASK_CYCLE_POINT}.tar.bz2 \
             --deterministic_forcing_output_tarball output_deterministic_forcing.tar.bz2 \
             --target_grid $CYLC_SUITE_DEF_PATH/preprocess/grids/30min.grid.txt
