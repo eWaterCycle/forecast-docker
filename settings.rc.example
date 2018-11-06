@@ -7,5 +7,5 @@
 {% set hsaf_user = "<Please fill me>" %}
 {% set hsaf_password = "<Please fill me>" %}
 
-# Options for cwl-runner, for running with provenance or singularity
+# Options for cwl-runner, for running with provenance (--provenance .prov) and/or via singularity (--singularity)
 {% set cwl_opts = "" %}
