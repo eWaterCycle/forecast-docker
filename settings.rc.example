@@ -13,4 +13,3 @@
 # Number of ensemble members to perform forecast for, does not include avg ensemble member
 {% set ensemble_member_count = 20 %}
 {% set initial_state_tarball = "<Please fill me>" %}
-{% set hydroworld_tarball = "<Please fill me>" %}

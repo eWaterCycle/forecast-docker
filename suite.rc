@@ -27,6 +27,7 @@ title = Running the forecast using CWL from Cylc
 
                 create_pcrglobwb_config => run_forecast
                 create_openda_config => run_forecast
+                fetch_hydroworld => run_forecast
 
                 run_forecast => postprocess
             """
@@ -81,7 +82,7 @@ title = Running the forecast using CWL from Cylc
         """
 
     [[Forecast]]
-    [[create_pcrglobwb_config, create_openda_config, run_forecast]]
+    [[create_pcrglobwb_config, create_openda_config, fetch_hydroworld, run_forecast]]
         inherit = Forecast
 
     [[create_pcrglobwb_config]]
@@ -98,6 +99,9 @@ title = Running the forecast using CWL from Cylc
             --state_write_time $CYLC_TASK_CYCLE_POINT
         """
 
+    [[fetch_hydroworld]]
+        script = """cwl-runner {{ cwl_opts }} $CYLC_SUITE_DEF_PATH/forecast/cwl/fetch_hydroworld.cwl"""
+
     [[run_forecast]]
         script = """cwl-runner {{ cwl_opts }} $CYLC_SUITE_DEF_PATH/forecast/cwl/run_forecast.cwl \
             --openda_config ../create_openda_config/openda_config.tar.gz \
@@ -106,7 +110,7 @@ title = Running the forecast using CWL from Cylc
             --ensemble_count {{ ensemble_member_count }} \
             --input_state {{ initial_state_tarball }} \
             --ensemble_forcing ../preprocess_ensemble_forcing/output_ensemble_forcing.tar.bz2 \
-            --hydroworld {{ hydroworld_tarball }}
+            --hydroworld ../fetch_hydroworld/hydroworld.tar.gz
         """
 
     [[postprocessing]]
