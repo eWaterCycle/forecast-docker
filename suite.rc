@@ -111,7 +111,7 @@ title = Running the forecast using CWL from Cylc
 
     [[postprocess]]
         script = """cwl-runner {{ cwl_opts }} $CYLC_SUITE_DEF_PATH/postprocess/cwl/postprocess.cwl \
-            --input_tarball ../forecast/model_output.tar.bz2 \
+            --input_tarball ../run_forecast/forecast.tar.bz2 \
             --uncertainty_template_file $CYLC_SUITE_DEF_PATH/postprocess/template/uncertaintyTemplate.nc
         """
 
