@@ -102,7 +102,7 @@ title = Running the forecast using CWL from Cylc
         script = """cwl-runner {{ cwl_opts }} $CYLC_SUITE_DEF_PATH/forecast/cwl/run_forecast.cwl \
             --openda_config ../create_openda_config/openda_config.tar.gz \
             --pcrglobwb_config ../create_pcrglobwb_config/pcrglobwb_config.ini \
-            --observation ../preprocess_observations/output_observation.tar.bz2 \
+            --observation ../preprocess_observations/output_observations.tar.bz2 \
             --ensemble_count {{ ensemble_member_count }} \
             --input_state {{ initial_state_tarball }} \
             --ensemble_forcing ../preprocess_ensemble_forcing/output_ensemble_forcing.tar.bz2 \
