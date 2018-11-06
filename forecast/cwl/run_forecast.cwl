@@ -36,8 +36,8 @@ outputs:
   forecast:
     type: File
     outputBinding:
-      glob: forecast.tar.gz
+      glob: forecast.tar.bz2
   new_state:
     type: File
     outputBinding:
-      glob: output_state.tar.gz
+      glob: output_state.tar.bz2
