@@ -60,8 +60,7 @@ title = Running the forecast using CWL from Cylc
 
     [[download_gefs]]
         script = """cwl-runner {{ cwl_opts }} $CYLC_SUITE_DEF_PATH/getforcing/cwl/download_gefs.cwl \
-            --iso_date $CYLC_TASK_CYCLE_POINT \
-            --ensemble_member_count {{ ensemble_member_count }}
+            --iso_date $CYLC_TASK_CYCLE_POINT
         """
 
     [[download_hsaf]]        
