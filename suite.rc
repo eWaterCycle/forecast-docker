@@ -10,6 +10,8 @@ title = Running the forecast using CWL from Cylc
 [scheduling]
     initial cycle point = {{ initial_cycle_point }}
     final cycle point = {{ final_cycle_point }}
+    [[special tasks]]
+        clock-trigger = download_gfs(PT2H), download_gefs(PT2H), download_hsaf(PT10H)
     [[dependencies]]
         [[[R1]]] # Initial cycle point.
             # get initial state from somewhere (preferable spinup of sorts)
