@@ -13,8 +13,16 @@ title = Running the forecast using CWL from Cylc
     [[dependencies]]
         [[[P1D]]]
             graph = """
+                #we use high-res gfs forcings
                 download_gfs => preprocess_deterministic_forcing
+
+                #and the gefs ensemble for variation across ensemble members
                 download_gefs => preprocess_ensemble_forcing
+
+                #we upscale the ensemble using the deterministic high-res focing
+                preprocess_deterministic_forcing => preprocess_ensemble_forcing
+
+                #we assimilate soil moisture into our model
                 download_hsaf => preprocess_observations
             """
 
@@ -40,21 +48,23 @@ title = Running the forecast using CWL from Cylc
     [[preprocess_deterministic_forcing, preprocess_ensemble_forcing, preprocess_observations, load_initial_state]]
         inherit = PREPROCESS
 
-    [[preprocess_deterministic_forcing]]
+    [[preprocess_observations]]
         script = """cwl-runner $CYLC_SUITE_DEF_PATH/preprocess/cwl/preprocess_observations.cwl \
             --input_tarball ../download_hsaf/h14_${CYLC_TASK_CYCLE_POINT}_0000.grib.bz2 \
             --iso_date $CYLC_TASK_CYCLE_POINT \
             --target_grid $CYLC_SUITE_DEF_PATH/preprocess/grids/30min.grid.txt \
             --target_mask $CYLC_SUITE_DEF_PATH/preprocess/grids/30min.grid.model.mask.nc
          """
-    [[preprocess_ensemble_forcing]]
+
+    [[preprocess_deterministic_forcing]]
         script = """cwl-runner $CYLC_SUITE_DEF_PATH/preprocess/cwl/preprocess_deterministic_forcing.cwl \
             --input_tarball ../download_gfs/gfs_${CYLC_TASK_CYCLE_POINT}.tar.bz2
         """
-    [[preprocess_observations]]
+
+    [[preprocess_ensemble_forcing]]
         script = """cwl-runner $CYLC_SUITE_DEF_PATH/preprocess/cwl/preprocess_ensemble_forcing.cwl \
             --input_tarball ../download_gefs/gefs_${CYLC_TASK_CYCLE_POINT}.tar.bz2 \
-            --deterministic_forcing_output_tarball output_deterministic_forcing.tar.bz2 \
+            --deterministic_forcing_output_tarball ../preprocess_ensemble_forcing/output_deterministic_forcing.tar.bz2 \
             --target_grid $CYLC_SUITE_DEF_PATH/preprocess/grids/30min.grid.txt
         """
 
