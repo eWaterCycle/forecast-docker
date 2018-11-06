@@ -52,7 +52,7 @@ title = Running the forecast using CWL from Cylc
             HSAF_USER = {{ hsaf_user }}
 
     [[PREPROCESS]]
-    [[preprocess_deterministic_forcing, preprocess_ensemble_forcing, preprocess_observations, load_initial_state]]
+    [[preprocess_deterministic_forcing, preprocess_ensemble_forcing, preprocess_observations]]
         inherit = PREPROCESS
 
     [[preprocess_observations]]
