@@ -44,10 +44,10 @@ title = Running the forecast using CWL from Cylc
         script = """cp {{ initial_state_tarball }} $CYLC_SUITE_RUN_DIR/output_state.tar.bz2"""
 
     [[load_initial_state]]
-         script = """cp $CYLC_SUITE_RUN_DIR/output_state.tar.bz2 .""""
+         script = """cp $CYLC_SUITE_RUN_DIR/output_state.tar.bz2 ."""
 
     [[save_state]]
-         script = """cp ../run_forecast/output_state.tar.bz2 $CYLC_SUITE_RUN_DIR""""
+         script = """cp ../run_forecast/output_state.tar.bz2 $CYLC_SUITE_RUN_DIR"""
 
     [[Forcing]]
     [[download_gfs, download_gefs, download_hsaf]]
