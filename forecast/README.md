@@ -17,6 +17,14 @@ cwl-runner ./forecast-docker/forecast/cwl/create_pcrglobwb_config.cwl \
 
 ```--model-hosts``` must be "" or omitted for local runs (remote not tested yet).
 
+fetch model of world:
+```
+cwl-runner ../forecast-docker/forecast/cwl/fetch_hydroworld.cwl
+```
+
+For now, you need to create or get an ensemble of model 
+states as state.tar.gz independently (WIP).
+
 To run:
 
 ```
