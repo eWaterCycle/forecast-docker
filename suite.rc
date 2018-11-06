@@ -32,13 +32,20 @@ title = Running the forecast using CWL from Cylc
         inherit = get_forcing
 
     [[download_gfs]]
-        script = "cwl-runner $CYLC_SUITE_DEF_PATH/getforcing/cwl/download_gfs.cwl --iso_date $CYLC_TASK_CYCLE_POINT"
+        script = """cwl-runner {{ cwl_opts }} $CYLC_SUITE_DEF_PATH/getforcing/cwl/download_gfs.cwl \
+            --iso_date $CYLC_TASK_CYCLE_POINT
+        """
 
     [[download_gefs]]
-        script = "cwl-runner $CYLC_SUITE_DEF_PATH/getforcing/cwl/download_gefs.cwl --iso_date $CYLC_TASK_CYCLE_POINT"
+        script = """cwl-runner {{ cwl_opts }} $CYLC_SUITE_DEF_PATH/getforcing/cwl/download_gefs.cwl \
+            --iso_date $CYLC_TASK_CYCLE_POINT
+        """
 
     [[download_hsaf]]        
-        script = "cwl-runner $CYLC_SUITE_DEF_PATH/getforcing/cwl/download_hsaf.cwl --hsaf_passwd $HSAF_PASSWORD --hsaf_user $HSAF_USER --iso_date $CYLC_TASK_CYCLE_POINT"
+        script = """cwl-runner {{ cwl_opts }} $CYLC_SUITE_DEF_PATH/getforcing/cwl/download_hsaf.cwl \
+            --hsaf_passwd $HSAF_PASSWORD --hsaf_user $HSAF_USER \
+            --iso_date $CYLC_TASK_CYCLE_POINT
+        """
 
         [[[environment]]]
             HSAF_PASSWORD = {{ hsaf_password }}
@@ -49,7 +56,7 @@ title = Running the forecast using CWL from Cylc
         inherit = PREPROCESS
 
     [[preprocess_observations]]
-        script = """cwl-runner $CYLC_SUITE_DEF_PATH/preprocess/cwl/preprocess_observations.cwl \
+        script = """cwl-runner {{ cwl_opts }} $CYLC_SUITE_DEF_PATH/preprocess/cwl/preprocess_observations.cwl \
             --input_tarball ../download_hsaf/h14_${CYLC_TASK_CYCLE_POINT}_0000.grib.bz2 \
             --iso_date $CYLC_TASK_CYCLE_POINT \
             --target_grid $CYLC_SUITE_DEF_PATH/preprocess/grids/30min.grid.txt \
@@ -57,12 +64,12 @@ title = Running the forecast using CWL from Cylc
          """
 
     [[preprocess_deterministic_forcing]]
-        script = """cwl-runner $CYLC_SUITE_DEF_PATH/preprocess/cwl/preprocess_deterministic_forcing.cwl \
+        script = """cwl-runner {{ cwl_opts }} $CYLC_SUITE_DEF_PATH/preprocess/cwl/preprocess_deterministic_forcing.cwl \
             --input_tarball ../download_gfs/gfs_${CYLC_TASK_CYCLE_POINT}.tar.bz2
         """
 
     [[preprocess_ensemble_forcing]]
-        script = """cwl-runner $CYLC_SUITE_DEF_PATH/preprocess/cwl/preprocess_ensemble_forcing.cwl \
+        script = """cwl-runner {{ cwl_opts }} $CYLC_SUITE_DEF_PATH/preprocess/cwl/preprocess_ensemble_forcing.cwl \
             --input_tarball ../download_gefs/gefs_${CYLC_TASK_CYCLE_POINT}.tar.bz2 \
             --deterministic_forcing_output_tarball ../preprocess_ensemble_forcing/output_deterministic_forcing.tar.bz2 \
             --target_grid $CYLC_SUITE_DEF_PATH/preprocess/grids/30min.grid.txt
