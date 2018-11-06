@@ -19,7 +19,8 @@ inputs:
     type: string
   model_hosts:
     type: string
-    default: ""
+    default: _default
+
 outputs:
   PCRGlobWB_ModelFactoryConfig:
     type: File
