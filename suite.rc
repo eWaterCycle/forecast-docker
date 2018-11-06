@@ -32,9 +32,9 @@ title = Running the forecast using CWL from Cylc
             """
 
 [runtime]
-    [[get_forcing]]
+    [[Forcing]]
     [[download_gfs, download_gefs, download_hsaf]]
-        inherit = get_forcing
+        inherit = Forcing
 
     [[download_gfs]]
         script = """cwl-runner {{ cwl_opts }} $CYLC_SUITE_DEF_PATH/getforcing/cwl/download_gfs.cwl \
@@ -56,9 +56,9 @@ title = Running the forecast using CWL from Cylc
             HSAF_PASSWORD = {{ hsaf_password }}
             HSAF_USER = {{ hsaf_user }}
 
-    [[PREPROCESS]]
+    [[preprocessing]]
     [[preprocess_deterministic_forcing, preprocess_ensemble_forcing, preprocess_observations]]
-        inherit = PREPROCESS
+        inherit = preprocessing
 
     [[preprocess_observations]]
         script = """cwl-runner {{ cwl_opts }} $CYLC_SUITE_DEF_PATH/preprocess/cwl/preprocess_observations.cwl \
@@ -80,9 +80,9 @@ title = Running the forecast using CWL from Cylc
             --target_grid $CYLC_SUITE_DEF_PATH/preprocess/grids/30min.grid.txt
         """
 
-    [[FORECAST]]
+    [[Forecast]]
     [[create_pcrglobwb_config, create_openda_config, run_forecast]]
-        inherit = FORECAST
+        inherit = Forecast
 
     [[create_pcrglobwb_config]]
         script = """cwl-runner {{ cwl_opts }} $CYLC_SUITE_DEF_PATH//forecast/cwl/create_pcrglobwb_config.cwl \
@@ -109,6 +109,9 @@ title = Running the forecast using CWL from Cylc
             --hydroworld {{ hydroworld_tarball }}
         """
 
+    [[postprocessing]]
+    [[postprocess]]
+      inherit = postprocessing
     [[postprocess]]
         script = """cwl-runner {{ cwl_opts }} $CYLC_SUITE_DEF_PATH/postprocess/cwl/postprocess.cwl \
             --input_tarball ../run_forecast/forecast.tar.bz2 \
