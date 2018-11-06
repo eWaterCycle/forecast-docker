@@ -17,16 +17,16 @@ title = Running the forecast using CWL from Cylc
                 download_gfs => preprocess_deterministic_forcing
 
                 #and the gefs ensemble for variation across ensemble members
-                download_gefs => preprocess_ensemble_forcing
+                download_gefs => preprocess_ensemble_forcing => run_forecast
 
                 #we upscale the ensemble using the deterministic high-res focing
                 preprocess_deterministic_forcing => preprocess_ensemble_forcing
 
                 #we assimilate soil moisture into our model
-                download_hsaf => preprocess_observations
+                download_hsaf => preprocess_observations => run_forecast
 
-                create_pcrglobwb_config
-                create_openda_config
+                create_pcrglobwb_config => run_forecast
+                create_openda_config => run_forecast
             """
 
 [runtime]
@@ -78,9 +78,9 @@ title = Running the forecast using CWL from Cylc
             --target_grid $CYLC_SUITE_DEF_PATH/preprocess/grids/30min.grid.txt
         """
 
-    [[create_config]]
-    [[create_pcrglobwb_config, create_openda_config]]
-        inherit = create_config
+    [[FORECAST]]
+    [[create_pcrglobwb_config, create_openda_config, run_forecast]]
+        inherit = FORECAST
 
     [[create_pcrglobwb_config]]
         script = """cwl-runner {{ cwl_opts }} $CYLC_SUITE_DEF_PATH//forecast/cwl/create_pcrglobwb_config.cwl \
@@ -94,6 +94,17 @@ title = Running the forecast using CWL from Cylc
         script = """cwl-runner {{ cwl_opts }} $CYLC_SUITE_DEF_PATH/forecast/cwl/create_openda_config.cwl \
             --ensemble_member_count {{ ensemble_member_count }} --model_hosts "" \
             --state_write_time $CYLC_TASK_CYCLE_POINT
+        """
+
+    [[run_forecast]]
+        script = """cwl-runner ./forecast-docker/forecast/cwl/run_forecast.cwl \
+            --openda_config ../create_openda_config/openda_config.tar.gz \
+            --pcrglobwb_config ../create_pcrglobwb_config/pcrglobwb_config.ini \
+            --observation ../preprocess_observations/output_observation.tar.bz2 \
+            --ensemble_count {{ ensemble_member_count }} \
+            --input_state {{ initial_state_tarball }} \
+            --ensemble_forcing ../preprocess_ensemble_forcing/output_ensemble_forcing.tar.bz2 \
+            --hydroworld {{ hydroworld_tarball }}
         """
 
 [visualization]
