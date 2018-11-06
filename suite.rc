@@ -41,7 +41,7 @@ title = Running the forecast using CWL from Cylc
 
 [runtime]
     [[bootstrap_initial_state]]
-        script = """cp {{ initial_state_tarball }} $CYLC_SUITE_RUN_DIR"""
+        script = """cp {{ initial_state_tarball }} $CYLC_SUITE_RUN_DIR/output_state.tar.bz2"""
 
     [[load_initial_state]]
          script = """cp $CYLC_SUITE_RUN_DIR/output_state.tar.bz2 .""""
