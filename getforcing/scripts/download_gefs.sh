@@ -13,7 +13,7 @@ common_parameters="lev_surface=on&leftlon=0&rightlon=360&toplat=90&bottomlat=-90
 #make sure file does not exist, as we append to it
 rm -f urls.txt
 
-for ensembleMember in {01..20}
+for ensembleMember in $(seq -f "%02g" 1 $ENSEMBLE_MEMBER_COUNT)
 do
     #create url for each hour of forecast result
     #odd range definition due to odd zero-padding (not 006, but 06)
