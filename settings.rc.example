@@ -9,3 +9,6 @@
 
 # Options for cwl-runner, for running with provenance (--provenance .prov) and/or via singularity (--singularity)
 {% set cwl_opts = "" %}
+
+# Number of ensemble members to perform forecast for, does not include avg ensemble member
+{% set ensemble_member_count = 20 %}

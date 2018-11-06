@@ -34,6 +34,8 @@ The forecast consists of multiple steps. In order to get the forecast running, t
 
 Copy `settings.rc.example` to `settings.rc` and edit it.
 
+The initial state and hydroworld has to available on the host.
+
 # Run
 
 ```bash

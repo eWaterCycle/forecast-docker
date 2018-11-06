@@ -24,6 +24,9 @@ title = Running the forecast using CWL from Cylc
 
                 #we assimilate soil moisture into our model
                 download_hsaf => preprocess_observations
+
+                create_pcrglobwb_config
+                create_openda_config
             """
 
 [runtime]
@@ -75,6 +78,23 @@ title = Running the forecast using CWL from Cylc
             --target_grid $CYLC_SUITE_DEF_PATH/preprocess/grids/30min.grid.txt
         """
 
+    [[create_config]]
+    [[create_pcrglobwb_config, create_openda_config]]
+        inherit = create_config
+
+    [[create_pcrglobwb_config]]
+        script = """cwl-runner {{ cwl_opts }} $CYLC_SUITE_DEF_PATH//forecast/cwl/create_pcrglobwb_config.cwl \
+            --starttime $CYLC_TASK_CYCLE_POINT --endtime $ENDTIME
+        """
+
+        [[[environment]]]
+            ENDTIME = $(cylc util cycletime --offset-days=8 --template=CCYYMMDD)
+
+    [[create_openda_config]]
+        script = """cwl-runner {{ cwl_opts }} $CYLC_SUITE_DEF_PATH/forecast/cwl/create_openda_config.cwl \
+            --ensemble_member_count {{ ensemble_member_count }} --model_hosts "" \
+            --state_write_time $CYLC_TASK_CYCLE_POINT
+        """
 
 [visualization]
     default node attributes = "style=filled", "shape=ellipse"
