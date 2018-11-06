@@ -11,8 +11,14 @@ title = Running the forecast using CWL from Cylc
     initial cycle point = {{ initial_cycle_point }}
     final cycle point = {{ final_cycle_point }}
     [[dependencies]]
-        [[[P1D]]]
+        [[[R1]]] # Initial cycle point.
+            # get initial state from somewhere (preferable spinup of sorts)
+            graph = bootstrap_initial_state
+        [[[P1D]]] # Main forecast workflow
             graph = """
+                save_state[-P1D] => load_initial_state
+                load_initial_state => run_forecast
+
                 #we use high-res gfs forcings
                 download_gfs => preprocess_deterministic_forcing
 
@@ -30,9 +36,19 @@ title = Running the forecast using CWL from Cylc
                 fetch_hydroworld => run_forecast
 
                 run_forecast => postprocess
+                run_forecast => save_state
             """
 
 [runtime]
+    [[bootstrap_initial_state]]
+        script = """cp {{ initial_state_tarball }} $CYLC_SUITE_RUN_DIR"""
+
+    [[load_initial_state]]
+         script = """cp $CYLC_SUITE_RUN_DIR/output_state.tar.bz2 .""""
+
+    [[save_state]]
+         script = """cp ../run_forecast/output_state.tar.bz2 $CYLC_SUITE_RUN_DIR""""
+
     [[Forcing]]
     [[download_gfs, download_gefs, download_hsaf]]
         inherit = Forcing
@@ -108,14 +124,15 @@ title = Running the forecast using CWL from Cylc
             --pcrglobwb_config ../create_pcrglobwb_config/pcrglobwb_config.ini \
             --observation ../preprocess_observations/output_observations.tar.bz2 \
             --ensemble_count {{ ensemble_member_count }} \
-            --input_state {{ initial_state_tarball }} \
+            --input_state ../load_initial_state/output_state.tar.bz2 \
             --ensemble_forcing ../preprocess_ensemble_forcing/output_ensemble_forcing.tar.bz2 \
             --hydroworld ../fetch_hydroworld/hydroworld.tar.gz
         """
 
     [[postprocessing]]
     [[postprocess]]
-      inherit = postprocessing
+        inherit = postprocessing
+
     [[postprocess]]
         script = """cwl-runner {{ cwl_opts }} $CYLC_SUITE_DEF_PATH/postprocess/cwl/postprocess.cwl \
             --input_tarball ../run_forecast/forecast.tar.bz2 \
