@@ -22,10 +22,18 @@ fetch model of world:
 cwl-runner ../forecast-docker/forecast/cwl/fetch_hydroworld.cwl
 ```
 
-For now, you need to create or get an ensemble of model 
-states as state.tar.gz independently (WIP).
+You can create and initial state by:
+```
+cwl-runner ../../../forecast-docker/forecast/cwl/fetch_spinup_forcings.cwl
+cwl-runner ./forecast-docker/forecast/cwl/create_pcrglobwb_config.cwl \
+  --starttime 20100101 --endtime 20100101 --spinup true --max_spinup 0
+cwl-runner ../../forecast-docker/forecast/cwl/run_spinup.cwl --forcings forcings.tar.gz --hydroworld ../hydroworld.tar.gz --pcrglobwb_config pcrglobwb_config.ini
+cwl-runner ../../../forecast-docker/forecast/cwl/clone_state.cwl --input_state ../output_state.tar.bz2 --number_of_clones 2
+```
+(note the pcrglobwb_config.ini cannot be reused between spin up and forecast run). the max spinup (in years) can be set
+to 30 (for nrmal spinup) or zero to (quickly) get a zero state.
 
-To run:
+To run forecast:
 
 ```
 cwl-runner ./forecast-docker/forecast/cwl/run_forecast.cwl \
