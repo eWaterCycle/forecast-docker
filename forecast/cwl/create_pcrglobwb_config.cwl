@@ -28,7 +28,7 @@ inputs:
     default: 'template-30min.ini'
   spinup:
     type: string
-    default: false
+    default: "false"
   max_spinup:
     type: int
     default: 0

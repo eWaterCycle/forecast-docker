@@ -19,7 +19,7 @@ title = Running the forecast using CWL from Cylc
     [[dependencies]]
         [[[R1]]] # Initial cycle point.
             # get initial state from somewhere (preferable spinup of sorts)
-            graph = bootstrap_initial_state
+            graph = bootstrap_initial_state => load_initial_state
         [[[P1D]]] # Main forecast workflow
             graph = """
                 save_state[-P1D] => load_initial_state
