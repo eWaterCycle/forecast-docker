@@ -12,6 +12,10 @@ title = Running the forecast using CWL from Cylc
     final cycle point = {{ final_cycle_point }}
     [[special tasks]]
         clock-trigger = download_gfs(PT2H), download_gefs(PT2H), download_hsaf(PT10H)
+        # NCEP GFS Forecasts (0.25 degree grid) is only available for last 10 days
+        # GFS Ensemble Forecasts (1 degree grid) is only available for last 8 days
+        # HSAF is only available for last 60 days
+        clock-expire = download_gfs(-P10D), download_gefs(-P8D), download_hsaf(-P5Y)
     [[dependencies]]
         [[[R1]]] # Initial cycle point.
             # get initial state from somewhere (preferable spinup of sorts)
@@ -52,6 +56,7 @@ title = Running the forecast using CWL from Cylc
          script = """cp ../run_forecast/output_state.tar.bz2 $CYLC_SUITE_RUN_DIR"""
 
     [[Forcing]]
+        retry delays = 24*PT1H
     [[download_gfs, download_gefs, download_hsaf]]
         inherit = Forcing
 
