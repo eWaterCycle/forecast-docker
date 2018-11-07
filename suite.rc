@@ -10,6 +10,7 @@ title = Running the forecast using CWL from Cylc
 [scheduling]
     initial cycle point = {{ initial_cycle_point }}
     final cycle point = {{ final_cycle_point }}
+    max active cycle points = 5
     [[special tasks]]
         clock-trigger = download_gfs(PT2H), download_gefs(PT2H), download_hsaf(PT10H)
     [[dependencies]]
@@ -123,10 +124,10 @@ title = Running the forecast using CWL from Cylc
     [[fetch_hydroworld]]
         script = """
             if [ ! -r $HYDROWORLD ]; then
-                cwl-runner {{ cwl_opts }} $CYLC_SUITE_DEF_PATH/forecast/cwl/fetch_hydroworld.cwl
+                cwl-runner {{ cwl_opts }} $CYLC_SUITE_DEF_PATH/forecast/cwl/fetch_hydroworld.cwl && \
+                cp hydroworld.tar.gz $HYDROWORLD
             fi
         """
-        post-script = """cp hydroworld.tar.gz $HYDROWORLD"""
 
     [[run_forecast]]
         script = """cwl-runner {{ cwl_opts }} $CYLC_SUITE_DEF_PATH/forecast/cwl/run_forecast.cwl \
