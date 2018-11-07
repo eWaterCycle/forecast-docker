@@ -8,3 +8,4 @@ LABEL version=0.2
 
 # copy scripts inside docker image
 COPY scripts /usr/src/scripts
+

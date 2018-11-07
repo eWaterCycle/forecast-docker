@@ -34,3 +34,4 @@ ENV PATH=/usr/src/scripts:${PATH}
 
 # copy scripts inside docker image
 RUN mkdir -p /usr/src/scripts
+
