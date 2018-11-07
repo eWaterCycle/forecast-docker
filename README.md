@@ -35,6 +35,7 @@ The forecast consists of multiple steps. In order to get the forecast running, t
 Copy `settings.rc.example` to `settings.rc` and edit it.
 
 The initial state tarballs (*.tar.bz2) have to available on the host.
+The forecast archive root directory should exist on the host.
 
 # Run
 
