@@ -1,0 +1,15 @@
+# Which forecast cycles to run (one per day).
+# Will pause automatically for any date in the future.
+{% set initial_cycle_point = "2018-11-03" %}
+{% set final_cycle_point = "2018-11-04" %}
+
+# Credentials for http://hsaf.meteoam.it
+{% set hsaf_user = "<Please fill me>" %}
+{% set hsaf_password = "<Please fill me>" %}
+
+# Options for cwl-runner, for running with provenance (--provenance .prov) and/or via singularity (--singularity)
+{% set cwl_opts = "" %}
+
+# Number of ensemble members to perform forecast for, does not include avg ensemble member
+{% set ensemble_member_count = 20 %}
+{% set initial_state_tarball = "<Please fill me>" %}

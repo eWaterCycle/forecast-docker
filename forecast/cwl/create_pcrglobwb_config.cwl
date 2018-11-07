@@ -5,7 +5,7 @@ class: CommandLineTool
 baseCommand: run_create_pcrglobwb_config.sh
 hints:
   DockerRequirement:
-    dockerImageId: ewatercycle/ewatercycle_forecast
+    dockerPull: ewatercycle/ewatercycle_forecast
 requirements:
   EnvVarRequirement:
     envDef:
