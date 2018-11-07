@@ -15,9 +15,7 @@ cwl-runner ./forecast-docker/forecast/cwl/create_pcrglobwb_config.cwl \
   --starttime 20181016 --endtime 20181018 
 ```
 
-```
-
---model-hosts``` must be "" or omitted for local runs (remote not tested 
+```--model-hosts```  must be "" or omitted for local runs (remote not tested 
 yet).
 
 Fetch model of world:
