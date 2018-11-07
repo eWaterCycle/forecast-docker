@@ -31,7 +31,8 @@ cwl-runner ./forecast-docker/forecast/cwl/run_spinup.cwl --forcings forcings.tar
 cwl-runner ./forecast-docker/forecast/cwl/clone_state.cwl --input_state ../output_state.tar.bz2 --number_of_clones 2
 ```
 (note the pcrglobwb_config.ini cannot be reused between spin up and forecast run). the max spinup (in years) can be set
-to 30 (for nrmal spinup) or zero to (quickly) get a zero state.
+to 30 (for nrmal spinup) or zero to (quickly) get a zero state. Note the given starttime agrees with the (default) downloaded
+climatology. Would need to be changed accordingly for different forcings..
 
 To run forecast:
 
