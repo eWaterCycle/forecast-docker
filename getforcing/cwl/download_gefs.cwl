@@ -5,7 +5,7 @@ class: CommandLineTool
 baseCommand: download_gefs.sh
 hints:
   DockerRequirement:
-    dockerImageId: ewtrcycl:ewtrcyclforecast_getforcing
+    dockerImageId: ewatercycle/ewatercycle_forecast_getforcing
 requirements:
   EnvVarRequirement:
     envDef:

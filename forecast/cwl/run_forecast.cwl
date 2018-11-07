@@ -5,7 +5,7 @@ class: CommandLineTool
 baseCommand: run_forecast.sh
 hints:
   DockerRequirement:
-    dockerImageId: ewtrcycl:ewtrcyclforecast
+    dockerImageId: ewatercycle/ewatercycle_forecast
 requirements:
   EnvVarRequirement:
     envDef:

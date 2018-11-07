@@ -5,7 +5,7 @@ class: CommandLineTool
 baseCommand: run_create_openda_config.sh
 hints:
   DockerRequirement:
-    dockerImageId: ewtrcycl:ewtrcyclforecast
+    dockerImageId: ewatercycle/ewatercycle_forecast
 requirements:
   EnvVarRequirement:
     envDef:
@@ -19,7 +19,8 @@ inputs:
     type: string
   model_hosts:
     type: string
-    default: ""
+    default: _default
+
 outputs:
   PCRGlobWB_ModelFactoryConfig:
     type: File
