@@ -5,7 +5,7 @@ class: CommandLineTool
 baseCommand: run_forecast.sh
 hints:
   DockerRequirement:
-    dockerImageId: ewatercycle/ewatercycle_forecast
+    dockerPull: ewatercycle/ewatercycle_forecast
 requirements:
   EnvVarRequirement:
     envDef:
@@ -36,8 +36,8 @@ outputs:
   forecast:
     type: File
     outputBinding:
-      glob: forecast.tar.gz
+      glob: forecast.tar.bz2
   new_state:
     type: File
     outputBinding:
-      glob: output_state.tar.gz
+      glob: output_state.tar.bz2

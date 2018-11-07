@@ -6,7 +6,7 @@ baseCommand: /opt/onedata-put.sh
 arguments: [$(inputs.source.path), $(inputs.dest)]
 hints:
   DockerRequirement:
-    dockerImageId: ewatercycle/oneclient
+    dockerPull: ewatercycle/oneclient
 requirements:
   EnvVarRequirement:
     envDef:

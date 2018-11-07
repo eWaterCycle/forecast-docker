@@ -5,7 +5,7 @@ class: CommandLineTool
 baseCommand: fetch_hydroworld.sh
 hints:
   DockerRequirement:
-    dockerImageId: ewatercycle/ewatercycle_forecast
+    dockerPull: ewatercycle/ewatercycle_forecast
 requirements:
   EnvVarRequirement:
     envDef:

@@ -6,7 +6,7 @@ baseCommand: /opt/onedata-get.sh
 arguments: [$(inputs.source), $(inputs.dest)]
 hints:
   DockerRequirement:
-    dockerImageId: ewatercycle/oneclient
+    dockerPull: ewatercycle/oneclient
 requirements:
   EnvVarRequirement:
     envDef:
