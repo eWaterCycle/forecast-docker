@@ -13,7 +13,8 @@ requirements:
       ENDTIME: $(inputs.endtime)
       HYDROWORLD_LOCATION: $(inputs.hydroworld_location)
       PCRGLOBWB_CONFIG_TEMPLATE: $(inputs.config_template)
-      ZERO_STATE: $(inputs.zerostate)
+      SPINUP: $(inputs.spinup)
+      MAX_SPINUP: $(inputs.max_spinup)
 inputs:
   starttime:
     type: string
@@ -25,9 +26,13 @@ inputs:
   config_template:
     type: string
     default: 'template-30min.ini'
-  zerostate:
+  spinup:
     type: string
-    default: no
+    default: false
+  max_spinup:
+    type: int
+    default: 0
+
 outputs:
   pcrglobwb_config:
     type: File
