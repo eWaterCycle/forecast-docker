@@ -37,7 +37,7 @@ title = Running the forecast using CWL from Cylc
                 create_openda_config => run_forecast
                 fetch_hydroworld => run_forecast
 
-                run_forecast => postprocess
+                run_forecast => postprocess => archive_forecast
                 run_forecast => save_state
             """
 
@@ -56,17 +56,17 @@ title = Running the forecast using CWL from Cylc
         inherit = Forcing
 
     [[download_gfs]]
-        script = """cwl-runner {{ cwl_opts }} $CYLC_SUITE_DEF_PATH/getforcing/cwl/download_gfs.cwl \
+        script = """cwl-runner --provenance .prov {{ cwl_opts }} $CYLC_SUITE_DEF_PATH/getforcing/cwl/download_gfs.cwl \
             --iso_date $CYLC_TASK_CYCLE_POINT
         """
 
     [[download_gefs]]
-        script = """cwl-runner {{ cwl_opts }} $CYLC_SUITE_DEF_PATH/getforcing/cwl/download_gefs.cwl \
+        script = """cwl-runner --provenance .prov {{ cwl_opts }} $CYLC_SUITE_DEF_PATH/getforcing/cwl/download_gefs.cwl \
             --iso_date $CYLC_TASK_CYCLE_POINT
         """
 
     [[download_hsaf]]        
-        script = """cwl-runner {{ cwl_opts }} $CYLC_SUITE_DEF_PATH/getforcing/cwl/download_hsaf.cwl \
+        script = """cwl-runner --provenance .prov {{ cwl_opts }} $CYLC_SUITE_DEF_PATH/getforcing/cwl/download_hsaf.cwl \
             --hsaf_passwd $HSAF_PASSWORD --hsaf_user $HSAF_USER \
             --iso_date $CYLC_TASK_CYCLE_POINT
         """
@@ -80,7 +80,7 @@ title = Running the forecast using CWL from Cylc
         inherit = preprocessing
 
     [[preprocess_observations]]
-        script = """cwl-runner {{ cwl_opts }} $CYLC_SUITE_DEF_PATH/preprocess/cwl/preprocess_observations.cwl \
+        script = """cwl-runner --provenance .prov {{ cwl_opts }} $CYLC_SUITE_DEF_PATH/preprocess/cwl/preprocess_observations.cwl \
             --input_tarball ../download_hsaf/h14_${CYLC_TASK_CYCLE_POINT}_0000.grib.bz2 \
             --iso_date $CYLC_TASK_CYCLE_POINT \
             --target_grid $CYLC_SUITE_DEF_PATH/preprocess/grids/30min.grid.txt \
@@ -88,12 +88,12 @@ title = Running the forecast using CWL from Cylc
          """
 
     [[preprocess_deterministic_forcing]]
-        script = """cwl-runner {{ cwl_opts }} $CYLC_SUITE_DEF_PATH/preprocess/cwl/preprocess_deterministic_forcing.cwl \
+        script = """cwl-runner --provenance .prov {{ cwl_opts }} $CYLC_SUITE_DEF_PATH/preprocess/cwl/preprocess_deterministic_forcing.cwl \
             --input_tarball ../download_gfs/gfs_${CYLC_TASK_CYCLE_POINT}.tar.bz2
         """
 
     [[preprocess_ensemble_forcing]]
-        script = """cwl-runner {{ cwl_opts }} $CYLC_SUITE_DEF_PATH/preprocess/cwl/preprocess_ensemble_forcing.cwl \
+        script = """cwl-runner --provenance .prov {{ cwl_opts }} $CYLC_SUITE_DEF_PATH/preprocess/cwl/preprocess_ensemble_forcing.cwl \
             --input_tarball ../download_gefs/gefs_${CYLC_TASK_CYCLE_POINT}.tar.bz2 \
             --deterministic_forcing_output_tarball ../preprocess_deterministic_forcing/output_deterministic_forcing.tar.bz2 \
             --target_grid $CYLC_SUITE_DEF_PATH/preprocess/grids/30min.grid.txt
@@ -104,7 +104,7 @@ title = Running the forecast using CWL from Cylc
         inherit = Forecast
 
     [[create_pcrglobwb_config]]
-        script = """cwl-runner {{ cwl_opts }} $CYLC_SUITE_DEF_PATH//forecast/cwl/create_pcrglobwb_config.cwl \
+        script = """cwl-runner --provenance .prov {{ cwl_opts }} $CYLC_SUITE_DEF_PATH//forecast/cwl/create_pcrglobwb_config.cwl \
             --starttime $CYLC_TASK_CYCLE_POINT --endtime $ENDTIME
         """
 
@@ -112,16 +112,16 @@ title = Running the forecast using CWL from Cylc
             ENDTIME = $(cylc util cycletime --offset-days=8 --template=CCYYMMDD)
 
     [[create_openda_config]]
-        script = """cwl-runner {{ cwl_opts }} $CYLC_SUITE_DEF_PATH/forecast/cwl/create_openda_config.cwl \
+        script = """cwl-runner --provenance .prov {{ cwl_opts }} $CYLC_SUITE_DEF_PATH/forecast/cwl/create_openda_config.cwl \
             --ensemble_member_count {{ ensemble_member_count }} --model_hosts "" \
             --state_write_time $CYLC_TASK_CYCLE_POINT
         """
 
     [[fetch_hydroworld]]
-        script = """cwl-runner {{ cwl_opts }} $CYLC_SUITE_DEF_PATH/forecast/cwl/fetch_hydroworld.cwl"""
+        script = """cwl-runner --provenance .prov {{ cwl_opts }} $CYLC_SUITE_DEF_PATH/forecast/cwl/fetch_hydroworld.cwl"""
 
     [[run_forecast]]
-        script = """cwl-runner {{ cwl_opts }} $CYLC_SUITE_DEF_PATH/forecast/cwl/run_forecast.cwl \
+        script = """cwl-runner --provenance .prov {{ cwl_opts }} $CYLC_SUITE_DEF_PATH/forecast/cwl/run_forecast.cwl \
             --openda_config ../create_openda_config/openda_config.tar.gz \
             --pcrglobwb_config ../create_pcrglobwb_config/pcrglobwb_config.ini \
             --observation ../preprocess_observations/output_observations.tar.bz2 \
@@ -132,12 +132,28 @@ title = Running the forecast using CWL from Cylc
         """
 
     [[postprocessing]]
-    [[postprocess]]
+    [[postprocess, archive_forecast]]
         inherit = postprocessing
-        script = """cwl-runner {{ cwl_opts }} $CYLC_SUITE_DEF_PATH/postprocess/cwl/postprocess.cwl \
+
+    [[postprocess]]
+        script = """cwl-runner --provenance .prov {{ cwl_opts }} $CYLC_SUITE_DEF_PATH/postprocess/cwl/postprocess.cwl \
             --input_tarball ../run_forecast/forecast.tar.bz2 \
             --uncertainty_template_file $CYLC_SUITE_DEF_PATH/postprocess/template/uncertaintyTemplate.nc
         """
+
+    [[archive_forecast]]
+        script = """mkdir $ARCHIVE_DIR $ARCHIVE_PROVENANCE_DIR && \
+            # forecast of each ensemble member
+            tar -C $ARCHIVE_DIR --strip-components=1 -xf ../run_forecast/forecast.tar.bz2 && \
+            # avg forecast
+            tar -C $ARCHIVE_DIR -xf ../postprocess/output_postprocessing.tar.bz2 && \
+            # provenance for each CWL based task
+            cd .. && find . -type d -name .prov -exec 'cp -r {} $ARCHIVE_PROVENANCE_DIR/$(dirname {})' \;
+        """
+
+        [[environment]]
+            ARCHIVE_DIR = "{{ archive_root }}/${CYLC_TASK_CYCLE_POINT}"
+            ARCHIVE_PROVENANCE_DIR = "{{ archive_root }}/${CYLC_TASK_CYCLE_POINT}/provenance"
 
 [visualization]
     default node attributes = "style=filled", "shape=ellipse"
