@@ -52,6 +52,7 @@ title = Running the forecast using CWL from Cylc
          script = """cp ../run_forecast/output_state.tar.bz2 $CYLC_SUITE_RUN_DIR"""
 
     [[Forcing]]
+        retry delays = 12*PT30M
     [[download_gfs, download_gefs, download_hsaf]]
         inherit = Forcing
 
