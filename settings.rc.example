@@ -7,9 +7,12 @@
 {% set hsaf_user = "<Please fill me>" %}
 {% set hsaf_password = "<Please fill me>" %}
 
-# Options for cwl-runner, for running with provenance (--provenance .prov) and/or via singularity (--singularity)
+# Options for cwl-runner, set tmpdir (--tmpdir-prefix + --tmp-outdir-prefix) and/or via singularity (--singularity)
 {% set cwl_opts = "" %}
 
 # Number of ensemble members to perform forecast for, does not include avg ensemble member
 {% set ensemble_member_count = 20 %}
 {% set initial_state_tarball = "<Please fill me>" %}
+
+# Directory where forecasts are archived, each forecast will be placed in a sub directory
+{% set archive_root = "<Please fill me>" %}
