@@ -100,6 +100,9 @@ title = Running the forecast using CWL from Cylc
         """
 
     [[Forecast]]
+        [[[environment]]]
+            HYDROWORLD = $CYLC_SUITE_RUN_DIR/hydroworld.tar.gz
+
     [[create_pcrglobwb_config, create_openda_config, fetch_hydroworld, run_forecast]]
         inherit = Forecast
 
@@ -118,7 +121,12 @@ title = Running the forecast using CWL from Cylc
         """
 
     [[fetch_hydroworld]]
-        script = """cwl-runner {{ cwl_opts }} $CYLC_SUITE_DEF_PATH/forecast/cwl/fetch_hydroworld.cwl"""
+        script = """
+            if [ ! -r $HYDROWORLD ]; then
+                cwl-runner {{ cwl_opts }} $CYLC_SUITE_DEF_PATH/forecast/cwl/fetch_hydroworld.cwl
+            fi
+        """
+        post-script = """cp hydroworld.tar.gz $HYDROWORLD"""
 
     [[run_forecast]]
         script = """cwl-runner {{ cwl_opts }} $CYLC_SUITE_DEF_PATH/forecast/cwl/run_forecast.cwl \
@@ -128,7 +136,7 @@ title = Running the forecast using CWL from Cylc
             --ensemble_count {{ ensemble_member_count }} \
             --input_state ../load_initial_state/output_state.tar.bz2 \
             --ensemble_forcing ../preprocess_ensemble_forcing/output_ensemble_forcing.tar.bz2 \
-            --hydroworld ../fetch_hydroworld/hydroworld.tar.gz
+            --hydroworld $HYDROWORLD
         """
 
     [[postprocessing]]
