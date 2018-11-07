@@ -164,7 +164,7 @@ title = Running the forecast using CWL from Cylc
             cd .. && find . -type d -name .prov -exec 'cp -r {} $ARCHIVE_PROVENANCE_DIR/$(dirname {})' \;
         """
 
-        [[environment]]
+        [[[environment]]]
             ARCHIVE_DIR = "{{ archive_root }}/${CYLC_TASK_CYCLE_POINT}"
             ARCHIVE_PROVENANCE_DIR = "{{ archive_root }}/${CYLC_TASK_CYCLE_POINT}/provenance"
 
