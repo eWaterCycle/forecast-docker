@@ -26,7 +26,7 @@ cwl-runner ./forecast-docker/forecast/cwl/create_pcrglobwb_config.cwl \
 cwl-runner ./forecast-docker/forecast/cwl/run_spinup.cwl \
   --forcings forcings.tar.gz --hydroworld hydroworld.tar.gz --pcrglobwb_config pcrglobwb_config.ini
 cwl-runner ./forecast-docker/forecast/cwl/clone_state.cwl \
-  --input_state output_state.tar.bz2 --number_of_clones 2
+  --input_state output_state.tar.bz2 --number_of_clones 2 --src_clone "0"
 ```
 
 Note the pcrglobwb_config.ini cannot be reused between spin up and forecast 
