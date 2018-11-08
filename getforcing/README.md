@@ -1,11 +1,6 @@
-# Download forecast forcings #
+# Download forecast forcings
 
-## Instructions ##
-
-Build docker as usual:
-```
-docker-compose build
-```
+## Instructions
 
 Run CWL to download forcings (example):
 ```
@@ -20,6 +15,6 @@ The output of the three steps is three files:
 
 These files are the input of the preprocessing steps.
 
-## hsaf username and password ##
+## hsaf username and password
 
 A hsaf username and password can be obtained from [H-SAF](http://hsaf.meteoam.it)

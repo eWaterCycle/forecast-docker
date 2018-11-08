@@ -1,13 +1,8 @@
-# Forecast configuration and run #
+# Forecast configuration and run
 
-## Instructions ##
+## Instructions
 
-Build docker as usual:
-```
-docker-compose build
-```
-
-Run CWL to configure:
+Example to run CWL to configure the forecast:
 ```
 cwl-runner ./forecast-docker/forecast/cwl/create_openda_config.cwl \
   --ensemble_member_count 2 --model_hosts <hostname> --state_write_time 20181016
@@ -57,7 +52,7 @@ states and hydroworld.tar.gz the state independent input model data.
 produces forecast.tar.gz and output_state.tar.gz, which are the forecast 
 and the model state (to serve as input for the next prediction).
 
-## caveats ##
+## caveats
 
 Need to check that the correct state is written and copied (ie the 
 state_write_time). the input dates and times need to be checked and their 

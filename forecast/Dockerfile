@@ -1,11 +1,10 @@
 # A docker container with openDA & PCR-GLOBWB installed as
 # used in the eWaterCycle project
 
-# use ubuntua 18.04 as base
-FROM ubuntu:18.04
+FROM ewatercycle/ewatercycle_forecast_base
 
-LABEL maintainer=ewtrcycl
-LABEL version=0.1
+LABEL maintainer=ewatercycle
+LABEL version=0.2
 
 # update repositories
 RUN apt-get -y update && \
@@ -73,4 +72,3 @@ ENV PCRGLOBWB_MODEL_DIR=/usr/src/PCR-GLOBWB_model
 ENV OPENDA_DIR=/usr/src/openda
 ENV OPENDA_CONFIG_TEMPLATE_DIR=/usr/src/templates/openda
 ENV PCRGLOBWB_CONFIG_TEMPLATE_DIR=/usr/src/templates/pcrglobwb
-CMD echo "test"
