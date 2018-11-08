@@ -211,7 +211,7 @@ title = Running the forecast using CWL from Cylc
 [visualization]
     default node attributes = "style=filled", "shape=ellipse"
     [[node attributes]]
-        Forcing = "fillcolor=#00c798"
+        forcing = "fillcolor=#00c798"
         preprocessing = "fillcolor=#ffcc00"
-        Forecast = "fillcolor=#00b4fd"
+        forecast = "fillcolor=#00b4fd"
         postprocessing = "fillcolor=#ff5966"
