@@ -19,7 +19,10 @@ title = Running the forecast using CWL from Cylc
     [[dependencies]]
         [[[R1]]] # Initial cycle point.
             # get initial state from somewhere (preferable spinup of sorts)
-            graph = bootstrap_initial_state => load_initial_state
+            graph = """
+                bootstrap_initial_state => load_initial_state
+                fetch_hydroworld
+            """
         [[[P1D]]] # Main forecast workflow
             graph = """
                 save_state[-P1D] => load_initial_state
@@ -39,14 +42,14 @@ title = Running the forecast using CWL from Cylc
 
                 create_pcrglobwb_config => run_forecast
                 create_openda_config => run_forecast
-                fetch_hydroworld => run_forecast
+                fetch_hydroworld[-P1D] => fetch_hydroworld => run_forecast
 
                 run_forecast => postprocess => archive_forecast
                 run_forecast => save_state
 
                 # handle expired download tasks
                 forcing:expired-any => expired_forcings
-                expired_forcings => !forcing & !preprocessing & !forecast & !postprocessing  # remove tasks
+                expired_forcings => !forcing & !preprocessing & !forecast_setup_run & !postprocessing  # remove tasks
                 forcing:succeed-all => !expired_forcings  # remove expired_forcings if forcings are downloaded succesfully
             """
 
@@ -131,8 +134,21 @@ title = Running the forecast using CWL from Cylc
         [[[environment]]]
             HYDROWORLD = $CYLC_SUITE_RUN_DIR/hydroworld.tar.gz
 
-    [[create_pcrglobwb_config, create_openda_config, fetch_hydroworld, run_forecast]]
+    [[fetch_hydroworld]]
         inherit = forecast
+        script = """
+            #!/usr/bin/env bash
+            if [ ! -r $HYDROWORLD ]; then
+                cwl-runner  --provenance .prov {{ cwl_opts }} $CYLC_SUITE_DEF_PATH/forecast/cwl/fetch_hydroworld.cwl && \
+                cp hydroworld.tar.gz $HYDROWORLD
+            fi
+        """
+
+    [[forecast_setup_run]]
+        inherit = forecast
+
+    [[create_pcrglobwb_config, create_openda_config, run_forecast]]
+        inherit = forecast_setup_run
 
     [[create_pcrglobwb_config]]
         script = """cwl-runner --provenance .prov {{ cwl_opts }} $CYLC_SUITE_DEF_PATH//forecast/cwl/create_pcrglobwb_config.cwl \
@@ -148,14 +164,6 @@ title = Running the forecast using CWL from Cylc
             --state_write_time $CYLC_TASK_CYCLE_POINT
         """
 
-    [[fetch_hydroworld]]
-        script = """
-            #!/usr/bin/env bash
-            if [ ! -r $HYDROWORLD ]; then
-                cwl-runner  --provenance .prov {{ cwl_opts }} $CYLC_SUITE_DEF_PATH/forecast/cwl/fetch_hydroworld.cwl && \
-                cp hydroworld.tar.gz $HYDROWORLD
-            fi
-        """
 
     [[run_forecast]]
         script = """cwl-runner --provenance .prov {{ cwl_opts }} $CYLC_SUITE_DEF_PATH/forecast/cwl/run_forecast.cwl \
