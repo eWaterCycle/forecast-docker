@@ -23,8 +23,10 @@ You can create an initial state by:
 cwl-runner ./forecast-docker/forecast/cwl/fetch_spinup_forcings.cwl
 cwl-runner ./forecast-docker/forecast/cwl/create_pcrglobwb_config.cwl \
   --starttime 20100101 --endtime 20100101 --spinup true --max_spinup 0
-cwl-runner ./forecast-docker/forecast/cwl/run_spinup.cwl --forcings forcings.tar.gz --hydroworld hydroworld.tar.gz --pcrglobwb_config pcrglobwb_config.ini
-cwl-runner ./forecast-docker/forecast/cwl/clone_state.cwl --input_state output_state.tar.bz2 --number_of_clones 2
+cwl-runner ./forecast-docker/forecast/cwl/run_spinup.cwl \
+  --forcings forcings.tar.gz --hydroworld hydroworld.tar.gz --pcrglobwb_config pcrglobwb_config.ini
+cwl-runner ./forecast-docker/forecast/cwl/clone_state.cwl \
+  --input_state output_state.tar.bz2 --number_of_clones 2 --src_clone "0"
 ```
 
 Note the pcrglobwb_config.ini cannot be reused between spin up and forecast 
@@ -32,6 +34,20 @@ run. The max spinup (in years) can be set to 30 (for normal spinup) or zero
 to (quickly) get a zero state. Note the given starttime agrees with the 
 (default) downloaded climatology. Would need to be changed accordingly for 
 different forcings..
+
+Additionally a workflow to run one or more member with a deterministic 
+forcing is included (useful for extra warm up step before forecast):
+```
+cwl-runner ./forecast-docker/forecast/cwl/create_pcrglobwb_config.cwl \
+  --starttime 20100101 --endtime 20100110
+cwl-runner ./forecast-docker/forecast/cwl/run_deterministic.cwl \
+  --forcings forcings.tar.gz --hydroworld hydroworld.tar.gz \
+  --members_to_run "0"  --input_state output_state.tar.bz2  \
+  --pcrglobwb_config pcrglobwb_config.ini
+```
+
+```--members_to_run``` can specify one or more members (e.g. "0 1 2"). 
+Members that are not listed are not present in the output.
 
 To run forecast:
 
