@@ -161,7 +161,7 @@ title = Running the forecast using CWL from Cylc
             # avg forecast
             tar -C $ARCHIVE_DIR -xf ../postprocess/output_postprocessing.tar.bz2 && \
             # provenance for each CWL based task
-            cd .. && find . -type d -name .prov -exec 'cp -r {} $ARCHIVE_PROVENANCE_DIR/$(dirname {})' \;
+            cd .. && find . -type d -name .prov -exec sh -c 'cp -r {} $ARCHIVE_PROVENANCE_DIR/$(dirname {})' \;
         """
 
         [[[environment]]]
