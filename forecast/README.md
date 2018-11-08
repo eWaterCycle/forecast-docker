@@ -47,7 +47,7 @@ cwl-runner ./forecast-docker/forecast/cwl/run_deterministic.cwl \
 ```
 
 ```--members_to_run``` can specify one or more members (e.g. "0 1 2"). 
-Members that are listed are not present in the output.
+Members that are not listed are not present in the output.
 
 To run forecast:
 
