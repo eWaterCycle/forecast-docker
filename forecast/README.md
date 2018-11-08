@@ -46,7 +46,7 @@ cwl-runner ./forecast-docker/forecast/cwl/run_deterministic.cwl \
   --pcrglobwb_config pcrglobwb_config.ini
 ```
 
-```--member_to_run``` can specify one or more members (e.g. "0 1 2"). 
+```--members_to_run``` can specify one or more members (e.g. "0 1 2"). 
 Members that are listed are not present in the output.
 
 To run forecast:
