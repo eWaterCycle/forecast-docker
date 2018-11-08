@@ -35,7 +35,7 @@ to (quickly) get a zero state. Note the given starttime agrees with the
 (default) downloaded climatology. Would need to be changed accordingly for 
 different forcings..
 
-Additionally workflows to run one or more member with a deterministic 
+Additionally a workflow to run one or more member with a deterministic 
 forcing is included (useful for extra warm up step before forecast):
 ```
 cwl-runner ./forecast-docker/forecast/cwl/create_pcrglobwb_config.cwl \
