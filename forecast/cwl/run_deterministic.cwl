@@ -2,7 +2,7 @@
 
 cwlVersion: v1.0
 class: CommandLineTool
-baseCommand: clone_state.sh
+baseCommand: run_deterministic.sh
 hints:
   DockerRequirement:
     dockerPull: ewatercycle/ewatercycle_forecast
@@ -10,17 +10,22 @@ requirements:
   EnvVarRequirement:
     envDef:
       INPUT_STATE: $(inputs.input_state.path)
-      NCLONES: $(inputs.number_of_clones)
-      ORG: $(inputs.src_clone)
+      FORCINGS: $(inputs.forcings.path)
+      PCRGLOBWB_CONFIG: $(inputs.pcrglobwb_config.path)
+      HYDROWORLD: $(inputs.hydroworld.path)      
+      MEMBERSTORUN: $(inputs.members_to_run)
 inputs:
   input_state:
     type: File
-  src_clone:
-    type: int
+  pcrglobwb_config:
+    type: File
+  forcings:
+    type: File
+  hydroworld:
+    type: File
+  members_to_run:
+    type: string
     default: "0"
-  number_of_clones:
-    type: int
-    default: 20
 
 outputs:
   new_state:

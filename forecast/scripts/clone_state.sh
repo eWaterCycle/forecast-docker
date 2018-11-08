@@ -13,7 +13,7 @@ mkdir -p output_state/state
 printf -v srcPadded '%02d' ${ORG}
 SRC="state/state-member${srcPadded}"
 
-for ensembleMember in $(seq 0 $NCLONES)
+for ensembleMember in $(seq 0 $((NCLONES-1)))
 do
 
   printf -v ensembleMemberPadded '%02d' ${ensembleMember}

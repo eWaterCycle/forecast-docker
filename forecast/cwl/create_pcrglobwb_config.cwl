@@ -31,7 +31,7 @@ inputs:
     default: "false"
   max_spinup:
     type: int
-    default: 0
+    default: "0"
 
 outputs:
   pcrglobwb_config:
