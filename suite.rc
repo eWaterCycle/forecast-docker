@@ -19,7 +19,10 @@ title = Running the forecast using CWL from Cylc
     [[dependencies]]
         [[[R1]]] # Initial cycle point.
             # get initial state from somewhere (preferable spinup of sorts)
-            graph = bootstrap_initial_state => load_initial_state
+            graph = """
+                bootstrap_initial_state => load_initial_state
+                fetch_hydroworld
+            """
         [[[P1D]]] # Main forecast workflow
             graph = """
                 save_state[-P1D] => load_initial_state
@@ -39,26 +42,43 @@ title = Running the forecast using CWL from Cylc
 
                 create_pcrglobwb_config => run_forecast
                 create_openda_config => run_forecast
-                fetch_hydroworld => run_forecast
+                fetch_hydroworld[-P1D] => fetch_hydroworld => run_forecast
 
                 run_forecast => postprocess => archive_forecast
                 run_forecast => save_state
+
+                # handle expired download tasks
+                forcing:expired-any => expired_forcings
+                expired_forcings => !forcing & !preprocessing & !forecast_setup_run & !postprocessing  # remove tasks
+                forcing:succeed-all => !expired_forcings  # remove expired_forcings if forcings are downloaded succesfully
             """
 
 [runtime]
     [[bootstrap_initial_state]]
-        script = """cp {{ initial_state_tarball }} $CYLC_SUITE_RUN_DIR/output_state.tar.bz2"""
+        script = """
+            #!/usr/bin/env sh
+            cp {{ initial_state_tarball }} $CYLC_SUITE_RUN_DIR/output_state.tar.bz2
+        """
 
-    [[load_initial_state]]
-         script = """cp $CYLC_SUITE_RUN_DIR/output_state.tar.bz2 ."""
+    [[expired_forcings]]
+        script =  """
+            #!/usr/bin/env bash
+            if [ -r ../load_initial_state/output_state.tar.bz2 ]; then
+                cp ../load_initial_state/output_state.tar.bz2 $CYLC_SUITE_RUN_DIR
+            else
+                cp {{ initial_state_tarball }} $CYLC_SUITE_RUN_DIR/output_state.tar.bz2
+            fi            
+        """
+        [[[events]]]
+            mail events = succeeded
+            mail to = {{notification_mail_to}}
+            mail from = ewatercycle_notifications@$(hostname)
 
-    [[save_state]]
-         script = """cp ../run_forecast/output_state.tar.bz2 $CYLC_SUITE_RUN_DIR"""
-
-    [[Forcing]]
+    [[forcing]]
         retry delays = 24*PT1H
+
     [[download_gfs, download_gefs, download_hsaf]]
-        inherit = Forcing
+        inherit = forcing
 
     [[download_gfs]]
         script = """cwl-runner --provenance .prov {{ cwl_opts }} $CYLC_SUITE_DEF_PATH/getforcing/cwl/download_gfs.cwl \
@@ -81,8 +101,14 @@ title = Running the forecast using CWL from Cylc
             HSAF_USER = {{ hsaf_user }}
 
     [[preprocessing]]
-    [[preprocess_deterministic_forcing, preprocess_ensemble_forcing, preprocess_observations]]
+    [[load_initial_state, preprocess_deterministic_forcing, preprocess_ensemble_forcing, preprocess_observations]]
         inherit = preprocessing
+
+    [[load_initial_state]]
+        script = """
+            #!/usr/bin/env sh
+            cp $CYLC_SUITE_RUN_DIR/output_state.tar.bz2 .
+        """
 
     [[preprocess_observations]]
         script = """cwl-runner --provenance .prov {{ cwl_opts }} $CYLC_SUITE_DEF_PATH/preprocess/cwl/preprocess_observations.cwl \
@@ -104,12 +130,25 @@ title = Running the forecast using CWL from Cylc
             --target_grid $CYLC_SUITE_DEF_PATH/preprocess/grids/30min.grid.txt
         """
 
-    [[Forecast]]
+    [[forecast]]
         [[[environment]]]
             HYDROWORLD = $CYLC_SUITE_RUN_DIR/hydroworld.tar.gz
 
-    [[create_pcrglobwb_config, create_openda_config, fetch_hydroworld, run_forecast]]
-        inherit = Forecast
+    [[fetch_hydroworld]]
+        inherit = forecast
+        script = """
+            #!/usr/bin/env bash
+            if [ ! -r $HYDROWORLD ]; then
+                cwl-runner  --provenance .prov {{ cwl_opts }} $CYLC_SUITE_DEF_PATH/forecast/cwl/fetch_hydroworld.cwl && \
+                cp hydroworld.tar.gz $HYDROWORLD
+            fi
+        """
+
+    [[forecast_setup_run]]
+        inherit = forecast
+
+    [[create_pcrglobwb_config, create_openda_config, run_forecast]]
+        inherit = forecast_setup_run
 
     [[create_pcrglobwb_config]]
         script = """cwl-runner --provenance .prov {{ cwl_opts }} $CYLC_SUITE_DEF_PATH//forecast/cwl/create_pcrglobwb_config.cwl \
@@ -125,13 +164,6 @@ title = Running the forecast using CWL from Cylc
             --state_write_time $CYLC_TASK_CYCLE_POINT
         """
 
-    [[fetch_hydroworld]]
-        script = """
-            if [ ! -r $HYDROWORLD ]; then
-                cwl-runner  --provenance .prov {{ cwl_opts }} $CYLC_SUITE_DEF_PATH/forecast/cwl/fetch_hydroworld.cwl && \
-                cp hydroworld.tar.gz $HYDROWORLD
-            fi
-        """
 
     [[run_forecast]]
         script = """cwl-runner --provenance .prov {{ cwl_opts }} $CYLC_SUITE_DEF_PATH/forecast/cwl/run_forecast.cwl \
@@ -145,7 +177,7 @@ title = Running the forecast using CWL from Cylc
         """
 
     [[postprocessing]]
-    [[postprocess, archive_forecast]]
+    [[postprocess, archive_forecast, save_state]]
         inherit = postprocessing
 
     [[postprocess]]
@@ -155,7 +187,9 @@ title = Running the forecast using CWL from Cylc
         """
 
     [[archive_forecast]]
-        script = """mkdir $ARCHIVE_DIR $ARCHIVE_PROVENANCE_DIR && \
+        script = """
+            #!/usr/bin/env sh
+            mkdir $ARCHIVE_DIR $ARCHIVE_PROVENANCE_DIR && \
             # forecast of each ensemble member
             tar -C $ARCHIVE_DIR --strip-components=1 -xf ../run_forecast/forecast.tar.bz2 && \
             # avg forecast
@@ -168,10 +202,16 @@ title = Running the forecast using CWL from Cylc
             ARCHIVE_DIR = "{{ archive_root }}/${CYLC_TASK_CYCLE_POINT}"
             ARCHIVE_PROVENANCE_DIR = "{{ archive_root }}/${CYLC_TASK_CYCLE_POINT}/provenance"
 
+    [[save_state]]
+        script = """
+            #!/usr/bin/env sh
+            cp ../run_forecast/output_state.tar.bz2 $CYLC_SUITE_RUN_DIR
+        """
+
 [visualization]
     default node attributes = "style=filled", "shape=ellipse"
     [[node attributes]]
-        Forcing = "fillcolor=#00c798"
+        forcing = "fillcolor=#00c798"
         preprocessing = "fillcolor=#ffcc00"
-        Forecast = "fillcolor=#00b4fd"
+        forecast = "fillcolor=#00b4fd"
         postprocessing = "fillcolor=#ff5966"
