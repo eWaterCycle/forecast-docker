@@ -17,6 +17,7 @@ Fetch model of world:
 ```
 cwl-runner ../forecast-docker/forecast/cwl/fetch_hydroworld.cwl
 ```
+### Creation of initial state
 
 You can create an initial state by:
 ```
@@ -35,6 +36,17 @@ to (quickly) get a zero state. Note the given starttime agrees with the
 (default) downloaded climatology. Would need to be changed accordingly for 
 different forcings..
 
+A spinup of a 30 years with 20 ensemble members and the starttime==endtime equal to the time you want to start the forecast can be done with the following command:
+```
+cwl-runner ./forecast-docker/forecast/cwl/fetch_spinup_forcings.cwl
+cwl-runner ./forecast-docker/forecast/cwl/create_pcrglobwb_config.cwl \
+  --starttime 20101103 --endtime 20101103 --spinup true --max_spinup 30
+cwl-runner ./forecast-docker/forecast/cwl/run_spinup.cwl \
+  --forcings forcings.tar.gz --hydroworld hydroworld.tar.gz --pcrglobwb_config pcrglobwb_config.ini
+cwl-runner ./forecast-docker/forecast/cwl/clone_state.cwl \
+  --input_state output_state.tar.bz2 --number_of_clones 21 --src_clone "0"
+```
+
 Additionally a workflow to run one or more member with a deterministic 
 forcing is included (useful for extra warm up step before forecast):
 ```
@@ -49,7 +61,7 @@ cwl-runner ./forecast-docker/forecast/cwl/run_deterministic.cwl \
 ```--members_to_run``` can specify one or more members (e.g. "0 1 2"). 
 Members that are not listed are not present in the output.
 
-To run forecast:
+### To run forecast:
 
 ```
 cwl-runner ./forecast-docker/forecast/cwl/run_forecast.cwl \
