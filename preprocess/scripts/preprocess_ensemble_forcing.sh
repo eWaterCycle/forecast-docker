@@ -20,7 +20,7 @@ tar -xjf ${DETERMINISTIC_FORCING_OUTPUT_TARBALL} -C temp/
 tar -xjf ${INPUT_TARBALL} -C temp/
 
 # Select GRIB_PRECIPITATION_PARAMETER and GRIB_TEMPERATURE_PARAMETER variables from the downloaded input.
-for ensembleMember in {01..20}
+for ensembleMember in $(seq -f "%02g" 1 $ENSEMBLE_MEMBER_COUNT)
 do
     # Note we skip the first file for precip
     # Since precip is only available after every 6 hours
@@ -50,7 +50,7 @@ cdo ensmean tempEnsMem??.grib2 tempEnsMeanOut.grib2
 # finally, the files are interpolated (re-mapped) to the resolution of {TARGET_GRID},
 # which is of the resolution of the model.
 
-for ensembleMember in {01..20}
+for ensembleMember in $(seq -f "%02g" 1 $ENSEMBLE_MEMBER_COUNT)
 do
     # we've cut this cdo command up into seperate commands because it was more stable in a docker container (malloc/segfault issues)
     cdo -f nc sub precipEnsMem${ensembleMember}.grib2 precipEnsMeanOut.grib2 temp.nc
