@@ -10,8 +10,11 @@ requirements:
   EnvVarRequirement:
     envDef:
       ISO_DATE: $(inputs.iso_date)
+      ENSEMBLE_MEMBER_COUNT: $(inputs.ensemble_member_count)
 inputs:
   iso_date:
+    type: int
+  ensemble_member_count:
     type: int
 outputs:
   download_gefs:

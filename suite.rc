@@ -87,7 +87,8 @@ title = Running the forecast using CWL from Cylc
 
     [[download_gefs]]
         script = """cwl-runner --provenance .prov {{ cwl_opts }} $CYLC_SUITE_DEF_PATH/getforcing/cwl/download_gefs.cwl \
-            --iso_date $CYLC_TASK_CYCLE_POINT
+            --iso_date $CYLC_TASK_CYCLE_POINT \
+            --ensemble_member_count {{ ensemble_member_count }}
         """
 
     [[download_hsaf]]        
@@ -126,6 +127,7 @@ title = Running the forecast using CWL from Cylc
     [[preprocess_ensemble_forcing]]
         script = """cwl-runner --provenance .prov {{ cwl_opts }} $CYLC_SUITE_DEF_PATH/preprocess/cwl/preprocess_ensemble_forcing.cwl \
             --input_tarball ../download_gefs/gefs_${CYLC_TASK_CYCLE_POINT}.tar.bz2 \
+            --ensemble_member_count {{ ensemble_member_count }}  \
             --deterministic_forcing_output_tarball ../preprocess_deterministic_forcing/output_deterministic_forcing.tar.bz2 \
             --target_grid $CYLC_SUITE_DEF_PATH/preprocess/grids/30min.grid.txt
         """

@@ -20,6 +20,7 @@ requirements:
       NETCDF_FILLVALUE: $(inputs.netcdf_fillvalue)
       TARGET_GRID: $(inputs.target_grid.path)
       OUTPUT_TARBALL_NAME: $(inputs.output_tarball_name)
+      ENSEMBLE_MEMBER_COUNT: $(inputs.ensemble_member_count)
 inputs:
   input_tarball:
     type: File
@@ -39,7 +40,8 @@ inputs:
   output_tarball_name:
     default: output_ensemble_forcing
     type: string
-
+  ensemble_member_count:
+    type: int
 outputs:
   preprocess_deterministic_forcing:    
     type: File
