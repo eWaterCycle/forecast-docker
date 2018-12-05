@@ -12,6 +12,7 @@ requirements:
       ENSEMBLE_MEMBER_COUNT: $(inputs.ensemble_member_count)
       STATE_WRITE_TIME: $(inputs.state_write_time)0000
       MODEL_HOSTS: $(inputs.model_hosts)
+      CONFIG_TEMPLATE: $(inputs.config_template)
 inputs:
   ensemble_member_count:
     type: int
@@ -20,7 +21,9 @@ inputs:
   model_hosts:
     type: string
     default: _default
-
+  config_template:
+    type: string
+    default: 'template_30min'
 outputs:
   PCRGlobWB_ModelFactoryConfig:
     type: File
