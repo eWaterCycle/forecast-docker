@@ -1,11 +1,13 @@
 #!jinja2
 %include settings.rc
 
-title = Running the forecast using CWL from Cylc
+[meta]
+    title = Running the forecast using CWL from Cylc
 
 [cylc]
     UTC mode = True
     cycle point format = %Y%m%d
+
 
 [scheduling]
     initial cycle point = {{ initial_cycle_point }}
@@ -16,6 +18,7 @@ title = Running the forecast using CWL from Cylc
         # GFS Ensemble Forecasts (1 degree grid) is only available for last 8 days
         # HSAF is only available for last 5 years
         clock-expire = download_gfs(P10D), download_gefs(P8D), download_hsaf(P5Y)
+
     [[dependencies]]
         [[[R1]]] # Initial cycle point.
             # get initial state from somewhere (preferable spinup of sorts)
@@ -47,6 +50,9 @@ title = Running the forecast using CWL from Cylc
                 run_forecast => postprocess => archive_forecast
                 run_forecast => save_state
 
+                archive_forecast => upload_researchdrive
+                upload_researchdrive[-P1D] => upload_researchdrive
+
                 # handle expired download tasks
                 forcing:expired-any => expired_forcings
                 expired_forcings => !forcing & !preprocessing & !forecast_setup_run & !postprocessing  # remove tasks
@@ -54,6 +60,14 @@ title = Running the forecast using CWL from Cylc
             """
 
 [runtime]
+    [[root]]
+	[[[events]]]
+	    handlers = "python $CYLC_SUITE_DEF_PATH/bin/slack_it.py"
+	    handler events = failed, retry, succeeded, submitted, started, warning, critical
+
+	[[[environment]]]
+	    SLACK_BOT_TOKEN= "{{ slackbot_token }}"
+
     [[bootstrap_initial_state]]
         script = """
             #!/usr/bin/env sh
@@ -67,12 +81,8 @@ title = Running the forecast using CWL from Cylc
                 cp ../load_initial_state/output_state.tar.bz2 $CYLC_SUITE_RUN_DIR
             else
                 cp {{ initial_state_tarball }} $CYLC_SUITE_RUN_DIR/output_state.tar.bz2
-            fi            
+            fi
         """
-        [[[events]]]
-            mail events = succeeded
-            mail to = {{notification_mail_to}}
-            mail from = ewatercycle_notifications@$(hostname)
 
     [[forcing]]
         retry delays = 24*PT1H
@@ -91,12 +101,11 @@ title = Running the forecast using CWL from Cylc
             --ensemble_member_count {{ ensemble_member_count }}
         """
 
-    [[download_hsaf]]        
+    [[download_hsaf]]
         script = """cwl-runner --provenance .prov {{ cwl_opts }} $CYLC_SUITE_DEF_PATH/getforcing/cwl/download_hsaf.cwl \
             --hsaf_passwd $HSAF_PASSWORD --hsaf_user $HSAF_USER \
             --iso_date $CYLC_TASK_CYCLE_POINT
         """
-
         [[[environment]]]
             HSAF_PASSWORD = {{ hsaf_password }}
             HSAF_USER = {{ hsaf_user }}
@@ -179,7 +188,7 @@ title = Running the forecast using CWL from Cylc
         """
 
     [[postprocessing]]
-    [[postprocess, archive_forecast, save_state]]
+    [[postprocess, archive_forecast, save_state, upload_researchdrive]]
         inherit = postprocessing
 
     [[postprocess]]
@@ -197,12 +206,22 @@ title = Running the forecast using CWL from Cylc
             # avg forecast
             tar -C $ARCHIVE_DIR -xf ../postprocess/output_postprocessing.tar.bz2 && \
             # provenance for each CWL based task
-            cd .. && find . -type d -name .prov -exec sh -c 'cp -r {} $ARCHIVE_PROVENANCE_DIR/$(dirname {})' \;
+            cd .. && find . -type d -name .prov -exec sh -c 'cp -r {} $ARCHIVE_PROVENANCE_DIR/$(dirname {})' \; && \
+            # Provenance dir has weird permissions
+            chmod -R g+r,g+X $ARCHIVE_PROVENANCE_DIR
         """
 
         [[[environment]]]
             ARCHIVE_DIR = "{{ archive_root }}/${CYLC_TASK_CYCLE_POINT}"
             ARCHIVE_PROVENANCE_DIR = "{{ archive_root }}/${CYLC_TASK_CYCLE_POINT}/provenance"
+
+    [[upload_researchdrive]]
+        retry delays = 24*PT1H
+        script = """
+            rclone copy -v --retries-sleep 30s --exclude data/ $ARCHIVE_DIR {{ researchdrive_root }}
+        """
+        [[[environment]]]
+            ARCHIVE_DIR = "{{ archive_root }}/${CYLC_TASK_CYCLE_POINT}"
 
     [[save_state]]
         script = """
