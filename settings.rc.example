@@ -17,5 +17,10 @@
 # Directory where forecasts are archived, each forecast will be placed in a sub directory
 {% set archive_root = "<Please fill me>" %}
 
+# Directory where forecast is archived on researchdrive should be of form: RD:/some/directory
+{% set researchdrive_root = "<Please fill me>" %}
+
 # e-mail address to which cylc mail events should be send
 {% set notification_mail_to = "<Please fill me>" %}
+# email from name will be prepended to @hostname
+{% set notification_mail_from = "<Please fill me" %}

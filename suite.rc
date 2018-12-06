@@ -1,7 +1,8 @@
 #!jinja2
 %include settings.rc
 
-title = Running the forecast using CWL from Cylc
+[meta]
+    title = Running the forecast using CWL from Cylc
 
 [cylc]
     UTC mode = True
@@ -47,6 +48,9 @@ title = Running the forecast using CWL from Cylc
                 run_forecast => postprocess => archive_forecast
                 run_forecast => save_state
 
+                archive_forecast => upload_researchdrive
+                upload_researchdrive[-P1D] => upload_researchdrive
+
                 # handle expired download tasks
                 forcing:expired-any => expired_forcings
                 expired_forcings => !forcing & !preprocessing & !forecast_setup_run & !postprocessing  # remove tasks
@@ -67,12 +71,12 @@ title = Running the forecast using CWL from Cylc
                 cp ../load_initial_state/output_state.tar.bz2 $CYLC_SUITE_RUN_DIR
             else
                 cp {{ initial_state_tarball }} $CYLC_SUITE_RUN_DIR/output_state.tar.bz2
-            fi            
+            fi
         """
         [[[events]]]
             mail events = succeeded
             mail to = {{notification_mail_to}}
-            mail from = ewatercycle_notifications@$(hostname)
+            mail from = {{notification_mail_from}}@$(hostname)
 
     [[forcing]]
         retry delays = 24*PT1H
@@ -91,7 +95,7 @@ title = Running the forecast using CWL from Cylc
             --ensemble_member_count {{ ensemble_member_count }}
         """
 
-    [[download_hsaf]]        
+    [[download_hsaf]]
         script = """cwl-runner --provenance .prov {{ cwl_opts }} $CYLC_SUITE_DEF_PATH/getforcing/cwl/download_hsaf.cwl \
             --hsaf_passwd $HSAF_PASSWORD --hsaf_user $HSAF_USER \
             --iso_date $CYLC_TASK_CYCLE_POINT
@@ -179,7 +183,7 @@ title = Running the forecast using CWL from Cylc
         """
 
     [[postprocessing]]
-    [[postprocess, archive_forecast, save_state]]
+    [[postprocess, archive_forecast, save_state, upload_researchdrive]]
         inherit = postprocessing
 
     [[postprocess]]
@@ -197,12 +201,26 @@ title = Running the forecast using CWL from Cylc
             # avg forecast
             tar -C $ARCHIVE_DIR -xf ../postprocess/output_postprocessing.tar.bz2 && \
             # provenance for each CWL based task
-            cd .. && find . -type d -name .prov -exec sh -c 'cp -r {} $ARCHIVE_PROVENANCE_DIR/$(dirname {})' \;
+            cd .. && find . -type d -name .prov -exec sh -c 'cp -r {} $ARCHIVE_PROVENANCE_DIR/$(dirname {})' \; && \
+            # Provenance dir has weird permissions
+            chmod -R g+r,g+X $ARCHIVE_PROVENANCE_DIR
         """
 
         [[[environment]]]
             ARCHIVE_DIR = "{{ archive_root }}/${CYLC_TASK_CYCLE_POINT}"
             ARCHIVE_PROVENANCE_DIR = "{{ archive_root }}/${CYLC_TASK_CYCLE_POINT}/provenance"
+
+    [[upload_researchdrive]]
+        retry delays = 24*PT1H
+        script = """
+            rclone copy -v --retries-sleep 30s --exclude data/ $ARCHIVE_DIR {{ researchdrive_root }}
+        """
+	[[[events]]]
+	    mail events = failed
+	    mail to = {{notification_mail_to}}
+	    mail from = {{notification_mail_from}}@$(hostname)
+        [[[environment]]]
+            ARCHIVE_DIR = "{{ archive_root }}/${CYLC_TASK_CYCLE_POINT}"
 
     [[save_state]]
         script = """
