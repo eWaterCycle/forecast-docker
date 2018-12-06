@@ -8,6 +8,7 @@
     UTC mode = True
     cycle point format = %Y%m%d
 
+
 [scheduling]
     initial cycle point = {{ initial_cycle_point }}
     final cycle point = {{ final_cycle_point }}
@@ -17,6 +18,7 @@
         # GFS Ensemble Forecasts (1 degree grid) is only available for last 8 days
         # HSAF is only available for last 5 years
         clock-expire = download_gfs(P10D), download_gefs(P8D), download_hsaf(P5Y)
+
     [[dependencies]]
         [[[R1]]] # Initial cycle point.
             # get initial state from somewhere (preferable spinup of sorts)
@@ -58,6 +60,14 @@
             """
 
 [runtime]
+    [[root]]
+	[[[events]]]
+	    handlers = "python $CYLC_SUITE_DEF_PATH/bin/slack_it.py"
+	    handler events = failed, retry, succeeded, submitted, started, warning, critical
+
+	[[[environment]]]
+	    SLACK_BOT_TOKEN= "{{ slackbot_token }}"
+
     [[bootstrap_initial_state]]
         script = """
             #!/usr/bin/env sh
@@ -73,10 +83,6 @@
                 cp {{ initial_state_tarball }} $CYLC_SUITE_RUN_DIR/output_state.tar.bz2
             fi
         """
-        [[[events]]]
-            mail events = succeeded
-            mail to = {{notification_mail_to}}
-            mail from = {{notification_mail_from}}@$(hostname)
 
     [[forcing]]
         retry delays = 24*PT1H
@@ -100,7 +106,6 @@
             --hsaf_passwd $HSAF_PASSWORD --hsaf_user $HSAF_USER \
             --iso_date $CYLC_TASK_CYCLE_POINT
         """
-
         [[[environment]]]
             HSAF_PASSWORD = {{ hsaf_password }}
             HSAF_USER = {{ hsaf_user }}
@@ -215,10 +220,6 @@
         script = """
             rclone copy -v --retries-sleep 30s --exclude data/ $ARCHIVE_DIR {{ researchdrive_root }}
         """
-	[[[events]]]
-	    mail events = failed
-	    mail to = {{notification_mail_to}}
-	    mail from = {{notification_mail_from}}@$(hostname)
         [[[environment]]]
             ARCHIVE_DIR = "{{ archive_root }}/${CYLC_TASK_CYCLE_POINT}"
 
