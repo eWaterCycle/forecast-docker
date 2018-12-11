@@ -10,10 +10,9 @@ from jinja2 import Environment, FileSystemLoader
 
 
 if __name__ == '__main__':
-
-    # FIXME hardcode template dir for 30min
-    #openda_config_template_dir = os.getenv('OPENDA_CONFIG_TEMPLATE_DIR')
-    openda_config_template_dir = '/usr/src/templates/openda/template_30min'
+    # use template dir for either 30min or 5min
+    openda_config_template_dir = os.path.join(os.getenv('OPENDA_CONFIG_TEMPLATE_DIR'),
+                                              os.getenv('CONFIG_TEMPLATE'))
 
     if openda_config_template_dir is None:
         print "ERROR: configuration template dir not defined"

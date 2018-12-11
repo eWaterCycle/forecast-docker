@@ -163,7 +163,8 @@
 
     [[create_pcrglobwb_config]]
         script = """cwl-runner --provenance .prov {{ cwl_opts }} $CYLC_SUITE_DEF_PATH//forecast/cwl/create_pcrglobwb_config.cwl \
-            --starttime $CYLC_TASK_CYCLE_POINT --endtime $ENDTIME
+            --starttime $CYLC_TASK_CYCLE_POINT --endtime $ENDTIME \
+            --config_template="template-30min.ini"
         """
 
         [[[environment]]]
@@ -172,7 +173,8 @@
     [[create_openda_config]]
         script = """cwl-runner --provenance .prov {{ cwl_opts }} $CYLC_SUITE_DEF_PATH/forecast/cwl/create_openda_config.cwl \
             --ensemble_member_count {{ ensemble_member_count }} --model_hosts "" \
-            --state_write_time $CYLC_TASK_CYCLE_POINT
+            --state_write_time $CYLC_TASK_CYCLE_POINT \
+            --config_template="template_30min"
         """
 
 
