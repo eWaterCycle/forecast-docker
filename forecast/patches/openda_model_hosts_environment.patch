@@ -1,0 +1,12 @@
+diff -Naur openda.orig/model_bmi/java/src/org/openda/model_bmi/BmiModelFactoryConfigReader.java openda/model_bmi/java/src/org/openda/model_bmi/BmiModelFactoryConfigReader.java
+--- openda.orig/model_bmi/java/src/org/openda/model_bmi/BmiModelFactoryConfigReader.java	2019-01-24 16:03:26.828086315 +0100
++++ openda/model_bmi/java/src/org/openda/model_bmi/BmiModelFactoryConfigReader.java	2019-01-24 16:32:18.297131128 +0100
+@@ -156,6 +156,8 @@
+ 		String hosts = castor.getHosts();
+ 		if (hosts == null || hosts.trim().isEmpty()) {//if hosts not configured.
+ 			this.hosts = null;
++		} else if (hosts == 'environment'){
++			this.hosts = System.getenv("MODEL_HOSTS").split(",");
+ 		} else {
+ 			this.hosts = hosts.split(",");
+ 		}

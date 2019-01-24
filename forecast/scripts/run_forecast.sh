@@ -23,14 +23,16 @@ mkdir model_template
 
 cp ${PCRGLOBWB_CONFIG} model_template
 
-find
-
 echo ensemble_count: ${ENSEMBLE_MEMBER_COUNT}
 
 tar xvf ${INPUT_STATE}
 tar xvf ${ENSEMBLE_FORCING}
 
 tar xvf ${HYDROWORLD} -C /tmp
+
+# set MODEL_HOSTS environment variable
+# variable is only used when hosts='environment' in openda config
+job_on_these_nodes.sh
 
 # As this for loop runs up to _and_including_ the given value, we
 # Get an additional member (0) for the main OpenDA model

@@ -40,6 +40,10 @@ RUN mkdir -p /usr/src && \
 ENV PATH=/usr/src/pcraster-4.1.0_x86-64/bin:/usr/src/scripts:${PATH}
 ENV PYTHONPATH=/usr/src/pcraster-4.1.0_x86-64/python:${PYTHONPATH}
 
+# copy patches inside docker image
+RUN mkdir -p /usr/src/patches
+COPY patches /usr/src/patches
+
 # install PCR-GLOBWB model
 ARG PCR-GLOBWB_model_tag=v2.0_alpha_ewatercycle
 RUN git clone https://github.com/eWaterCycle/PCR-GLOBWB_model.git && \
@@ -53,6 +57,7 @@ RUN mkdir -p /usr/src && \
     wget -q -O - "https://zenodo.org/record/60077/files/openda-ewatercycle.tar.bz2" \
       | tar xCj /usr/src && \
     cd /usr/src/openda && \
+    patch -Np1 -i /usr/src/patches/openda_model_hosts_environment.patch && \
     cd core/bin_external && \ 
     ./settings_local.sh && \
     ./settings_local_linux.sh && \
