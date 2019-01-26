@@ -11,3 +11,4 @@ else
     MODEL_HOSTS=`scontrol show hostname $Host | paste -d, -s`
 fi
 export MODEL_HOSTS=$MODEL_HOSTS
+
