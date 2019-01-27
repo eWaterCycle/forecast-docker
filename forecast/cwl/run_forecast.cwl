@@ -16,6 +16,7 @@ requirements:
       INPUT_STATE: $(inputs.input_state.path)
       ENSEMBLE_FORCING: $(inputs.ensemble_forcing.path)
       HYDROWORLD: $(inputs.hydroworld.path)      
+      MODEL_HOSTS: $(inputs.model_hosts)
 inputs:
   openda_config:
     type: File
@@ -31,6 +32,9 @@ inputs:
     type: File
   hydroworld:
     type: File
+  model_hosts:
+    type: string
+    default: "" 
 
 outputs:
   forecast:
