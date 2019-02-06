@@ -22,7 +22,7 @@ pip2 install cwlref-runner
 Most tasks run inside in a Docker container by the cwl-runner. Follow [installation instructions](https://docs.docker.com/install/) so `docker` can be run as the user.
 
 ## Building docker images
-Docker images of the forecast steps are available on docker hub. Building the docker images itself requires the use of [boatswain](https://https://github.com/NLeSC/boatswain).
+Docker images of the forecast steps are available on docker hub. Building the docker images itself requires the use of [boatswain](https://github.com/NLeSC/boatswain).
 ```bash
 pip install boatswain
 boatswain build
