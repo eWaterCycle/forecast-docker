@@ -19,7 +19,7 @@ pip2 install cwlref-runner
 
 ### Docker
 
-Most tasks run inside in a Docker container by the cwl-runner. Follow [installation instructions](https://docs.docker.com/install/) so `docker` can be run as the user.
+Most tasks run inside a Docker container by the cwl-runner. Follow [installation instructions](https://docs.docker.com/install/) so `docker` can be run as the user.
 
 ## Building docker images
 Docker images of the forecast steps are available on docker hub. Building the docker images itself requires the use of [boatswain](https://github.com/NLeSC/boatswain).
@@ -41,7 +41,7 @@ The forecast consists of multiple steps. In order to get the forecast running, t
 
 Copy `settings.rc.example` to `settings.rc` and edit it.
 
-The initial state tarballs (*.tar.bz2) have to available on the host.
+The initial state tarballs (*.tar.bz2) have to be available on the host.
 The forecast archive root directory should exist on the host.
 
 ## Run
